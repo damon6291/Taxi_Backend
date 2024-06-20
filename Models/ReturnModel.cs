@@ -1,0 +1,46 @@
+﻿namespace WMS_backend.Models
+{
+    public class ReturnModel
+    {
+        public bool IsSuccess { get; set; } = false;
+        public bool IsLogout { get; set; } = false;
+        public object Results { get; set; } = new object();
+        public List<string> ErrorMessages { get; set; } = new List<string>();
+
+        public ReturnModel Fail(string str)
+        {
+            IsSuccess = false;
+            ErrorMessages.Add(str); 
+            return this;
+        }
+        public ReturnModel Fail(List<string> str)
+        {
+            IsSuccess = false;
+            ErrorMessages = str;
+            return this;
+        }
+        public ReturnModel Fail()
+        {
+            IsSuccess = false;
+            return this;
+        }
+        public ReturnModel Logout()
+        {
+            IsSuccess = false;
+            IsLogout = true;
+            ErrorMessages.Add("PLease log in again");
+            return this;
+        }
+        public ReturnModel Success(object data)
+        {
+            IsSuccess = true;
+            Results = data;
+            return this;
+        }
+        public ReturnModel Success()
+        {
+            IsSuccess = true;
+            return this;
+        }
+    }
+}
