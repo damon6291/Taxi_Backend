@@ -37,11 +37,9 @@ namespace WMS_backend.Managers
         public async Task<string?> CheckPermission(Guid userId, EnumPermissionType[] permissions, bool isCrud)
         {
             string? ret = null;
-            var userPermissions = await context.UserPermission.Where(x => x.UserId == userId && isCrud ? x.IsCrud : true).Select(x => x.CompanyPermission.PermissionType).ToListAsync();
-            foreach (var permission in userPermissions)
-            {
-                if (permissions.Contains(permission)) return ret;
-            }
+            var permissionList = permissions.Select(x => new { PermissionType = x }).ToList();
+            var havePermission = await context.UserPermission.Where(x => x.UserId == userId && isCrud ? x.IsCrud : true).WhereBulkContains(permissionList, x => x.PermissionType).CountAsync();
+            if (havePermission > 0) return ret;
             ret = ("User does not have permission");
             return ret;
         }

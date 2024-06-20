@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using WMS_backend.Managers;
 using WMS_backend.Models;
 using WMS_backend.Models.Enums;
+using WMS_backend.Models.Permission;
 using WMS_backend.Services;
 
 namespace WMS_backend.Controllers
@@ -68,5 +69,38 @@ namespace WMS_backend.Controllers
 
             return Ok(ret.Success(obj));
         }
+
+        [HttpPut("upsert/{updateUserId}")]
+        public async Task<IActionResult> UpsertUserPermission(Guid updateUserId, List<UserPermissionDTO> permissions)
+        {
+            var ret = new ReturnModel();
+            var userId = userService.GetUserId();
+            if (userId == null) return Ok(ret.Logout());
+            var permissionError = await authManager.CheckPermission((Guid)userId, new EnumPermissionType[] { EnumPermissionType.ManageTeam, EnumPermissionType.ManageCompany }, false);
+            if (permissionError != null) return Ok(ret.Fail(permissionError));
+
+            var (res, obj) = await permissionManager.UpsertUserPermission(updateUserId, permissions);
+
+            if (!res) return Ok(ret.Fail(obj.ToString()));
+
+            return Ok(ret.Success(obj));
+        }
+
+        [HttpDelete("{userPermissionId}")]
+        public async Task<IActionResult> DeleteUserPermission(Guid userPermissionId)
+        {
+            var ret = new ReturnModel();
+            var userId = userService.GetUserId();
+            if (userId == null) return Ok(ret.Logout());
+            var permissionError = await authManager.CheckPermission((Guid)userId, new EnumPermissionType[] { EnumPermissionType.ManageTeam, EnumPermissionType.ManageCompany }, false);
+            if (permissionError != null) return Ok(ret.Fail(permissionError));
+
+            var (res, obj) = await permissionManager.DeleteUserPermission(userPermissionId);
+
+            if (!res) return Ok(ret.Fail(obj.ToString()));
+
+            return Ok(ret.Success(obj));
+        }
+        
     }
 }
