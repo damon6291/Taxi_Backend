@@ -26,6 +26,8 @@ namespace WMS_backend.Models.Enums
         Product = 80,
         [Display(GroupName = "Inventory", Description = "/dashboard/inventory/stock")]
         Stock = 90,
+        [Display(GroupName = "Inventory", Description = "/dashboard/inventory/location")]
+        Location = 95,
         [Display(GroupName = "Purchasing", Description = "/dashboard/purchasing/purchase-order")]
         PurchaseOrder = 100,
         [Display(GroupName = "Purchasing", Description = "/dashboard/purchasing/purchase-request")]
@@ -44,9 +46,6 @@ namespace WMS_backend.Models.Enums
         ManageCompany = 170,
         [Display(GroupName = "Setting", Description = "/dashboard/setting/team")]
         ManageTeam = 180,
-
-        [Display(GroupName = "Setting", Description = "/dashboard/setting/test")]
-        Test = 200,
 
 
 

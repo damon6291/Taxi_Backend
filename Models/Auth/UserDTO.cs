@@ -9,6 +9,8 @@
         public string LastName { get; set; }
         public string? Phone { get; set; }
         public DateTime? LastLoginDateTime { get; set; }
-        public DateTime? CreatedDateTime { get; set; } 
+        public DateTime? CreatedDateTime { get; set; }
+        public DateTime? ModifiedDateTime { get; set; }
+        public UserDTO? ModifiedUser { get; set; }
     }
 }

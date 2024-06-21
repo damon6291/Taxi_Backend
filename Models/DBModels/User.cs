@@ -16,11 +16,11 @@ namespace WMS_backend.Models.DBModels
 
         public DateTime? LastLoginDateTime { get; set; }
         public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
-        public DateTime? ModifiedDateTime { get; set; }
+        public DateTime ModifiedDateTime { get; set; } = DateTime.UtcNow;
         public Guid? ModifiedUserId { get; set; }
         public Guid CompanyId { get; set; }
         [ForeignKey("ModifiedUserId")]
-        public virtual User ModifiedUser { get; set; }
+        public virtual User? ModifiedUser { get; set; }
         public virtual Company Company { get; set; }
 
         public virtual ICollection<TeamUser> TeamUsers { get; set; } = new HashSet<TeamUser>();

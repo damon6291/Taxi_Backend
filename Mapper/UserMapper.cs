@@ -9,14 +9,16 @@ namespace WMS_backend.Mapper
         {
             return new UserDTO()
             {
-                UserId= user.UserId,
+                UserId = user.UserId,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 IsArchived = user.IsArchived,
                 Phone = user.Phone,
-                CreatedDateTime= user.CreatedDateTime,
-                LastLoginDateTime= user.LastLoginDateTime,
+                CreatedDateTime = user.CreatedDateTime,
+                LastLoginDateTime = user.LastLoginDateTime,
+                ModifiedDateTime = user.ModifiedDateTime,
+                ModifiedUser = user.ModifiedUser == null ? null : UserToDTO(user.ModifiedUser),
             };
         }
 

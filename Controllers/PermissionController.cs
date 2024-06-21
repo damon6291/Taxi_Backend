@@ -25,14 +25,14 @@ namespace WMS_backend.Controllers
             this.authManager = authManager;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetPermission()
+        [HttpGet("user")]
+        public async Task<IActionResult> GetUserPermission()
         {
             var ret = new ReturnModel();
             var userId = userService.GetUserId();
             if (userId == null) return Ok(ret.Logout());
 
-            var (res, obj) = await permissionManager.GetPermission((Guid)userId);
+            var (res, obj) = await permissionManager.GetUserPermission((Guid)userId);
 
             if (!res) return Ok(ret.Fail(obj.ToString()));
 

@@ -17,6 +17,8 @@ namespace WMS_backend.Models.DBModels
         [MaxLength(2000)]
         public string? MessageFromTeam { get; set; }
 
+        public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
+
         public virtual User User { get; set; }
         public virtual Team Team { get; set; }
     }

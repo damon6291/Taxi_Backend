@@ -25,6 +25,8 @@ namespace WMS_backend.Models.DBModels
         public float Shipping { get; set; }
         public float Total { get; set; }
         public bool IsArchived { get; set; } = false;
+        public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
+        public DateTime ModifiedDateTime { get; set; } = DateTime.UtcNow;
 
         public virtual Location Location { get; set; }
         public virtual Supplier Supplier { get; set; }

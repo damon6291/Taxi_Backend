@@ -36,7 +36,7 @@ namespace WMS_backend.Managers
             return (true, menu);
         }
 
-        public async Task<(bool, object)> GetPermission(Guid userId)
+        public async Task<(bool, object)> GetUserPermission(Guid userId)
         {
             var user = await authManager.GetUser(userId);
             if (user == null) return (false, "User does not exist");
