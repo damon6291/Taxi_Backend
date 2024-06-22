@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Ocsp;
 using WMS_backend.Managers;
 using WMS_backend.Models;
 using WMS_backend.Models.Auth;
@@ -29,6 +30,24 @@ namespace WMS_backend.Controllers
             if (!res) return Ok(ret.Fail());
 
             ret.Success(new { token = msg });
+
+            return Ok(ret);
+        }
+
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetMe()
+        {
+            var ret = new ReturnModel();
+            var userId = userService.GetUserId();
+            if (userId == null) return Ok(ret.Logout());
+
+            var (res, msg) = await authManager.GetMe((Guid)userId);
+
+            if (!res) return Ok(ret.Fail(msg.ToString()));
+
+            ret.Success(msg);
 
             return Ok(ret);
         }

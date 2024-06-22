@@ -32,10 +32,7 @@ namespace WMS_backend.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
-            {
-                relationship.DeleteBehavior = DeleteBehavior.Restrict;
-            }
+            modelBuilder.HasPostgresExtension("uuid-ossp");
             foreach (var p in modelBuilder.Model.GetEntityTypes().SelectMany(t => t.GetProperties())
                 .Where(p => p.ClrType == typeof(string) && p.GetMaxLength() == null))
             {
@@ -48,7 +45,7 @@ namespace WMS_backend.Data
                     modelBuilder
                         .Entity(entity.ClrType)
                         .Property(property.Name)
-                        .HasDefaultValueSql("newsequentialid()");
+                        .HasDefaultValueSql("uuid_generate_v4()");
                 }
             }
             modelBuilder.Entity<PermissionType>().HasData(

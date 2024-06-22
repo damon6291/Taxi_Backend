@@ -2,8 +2,8 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WMS_backend.Data;
 
 #nullable disable
@@ -18,195 +18,244 @@ namespace WMS_backend.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.20")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "uuid-ossp");
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.Company", b =>
                 {
                     b.Property<Guid>("CompanyId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("newsequentialid()");
+                        .HasColumnType("uuid")
+                        .HasColumnName("companyid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<string>("Address")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("address");
 
                     b.Property<string>("Contact")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("contact");
 
                     b.Property<DateTime>("CreatedDateTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("createddatetime");
 
                     b.Property<string>("Email")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("email");
 
                     b.Property<bool>("IsArchived")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("isarchived");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("phone");
 
-                    b.HasKey("CompanyId");
+                    b.HasKey("CompanyId")
+                        .HasName("pk_company");
 
-                    b.ToTable("Company");
+                    b.ToTable("company", (string)null);
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.CompanyPermission", b =>
                 {
                     b.Property<Guid>("CompanyPermissionId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("newsequentialid()");
+                        .HasColumnType("uuid")
+                        .HasColumnName("companypermissionid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("companyid");
 
                     b.Property<int>("PermissionType")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("permissiontype");
 
-                    b.HasKey("CompanyPermissionId");
+                    b.HasKey("CompanyPermissionId")
+                        .HasName("pk_companypermission");
 
-                    b.HasIndex("CompanyId");
+                    b.HasIndex("CompanyId")
+                        .HasDatabaseName("ix_companypermission_companyid");
 
-                    b.ToTable("CompanyPermission");
+                    b.ToTable("companypermission", (string)null);
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.Inventory", b =>
                 {
                     b.Property<Guid>("InventoryId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("newsequentialid()");
+                        .HasColumnType("uuid")
+                        .HasColumnName("inventoryid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<DateTime>("CreatedDateTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("createddatetime");
 
                     b.Property<DateTime?>("ExpirationDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expirationdate");
 
                     b.Property<DateTime>("ModifiedDateTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("modifieddatetime");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("productid");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity");
 
                     b.Property<Guid>("RackId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("rackid");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("userid");
 
                     b.Property<int>("XSlot")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("xslot");
 
                     b.Property<int>("YSlot")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("yslot");
 
-                    b.HasKey("InventoryId");
+                    b.HasKey("InventoryId")
+                        .HasName("pk_inventory");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductId")
+                        .HasDatabaseName("ix_inventory_productid");
 
-                    b.HasIndex("RackId");
+                    b.HasIndex("RackId")
+                        .HasDatabaseName("ix_inventory_rackid");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_inventory_userid");
 
-                    b.ToTable("Inventory");
+                    b.ToTable("inventory", (string)null);
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.Location", b =>
                 {
                     b.Property<Guid>("LocationId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("newsequentialid()");
+                        .HasColumnType("uuid")
+                        .HasColumnName("locationid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<string>("Address")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("address");
 
                     b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("companyid");
 
                     b.Property<bool>("IsArchived")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("isarchived");
 
                     b.Property<int>("LocationType")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("locationtype");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("phone");
 
-                    b.HasKey("LocationId");
+                    b.HasKey("LocationId")
+                        .HasName("pk_location");
 
-                    b.HasIndex("CompanyId");
+                    b.HasIndex("CompanyId")
+                        .HasDatabaseName("ix_location_companyid");
 
-                    b.ToTable("Location");
+                    b.ToTable("location", (string)null);
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.Notification", b =>
                 {
                     b.Property<Guid>("NotificationId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("newsequentialid()");
+                        .HasColumnType("uuid")
+                        .HasColumnName("notificationid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("description");
 
                     b.Property<bool>("IsArchived")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("isarchived");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name");
 
                     b.Property<int>("NotificationType")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("notificationtype");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("userid");
 
-                    b.HasKey("NotificationId");
+                    b.HasKey("NotificationId")
+                        .HasName("pk_notification");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_notification_userid");
 
-                    b.ToTable("Notification");
+                    b.ToTable("notification", (string)null);
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.PermissionType", b =>
                 {
                     b.Property<int>("PermissionTypeId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("permissiontypeid");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name");
 
-                    b.HasKey("PermissionTypeId");
+                    b.HasKey("PermissionTypeId")
+                        .HasName("pk_permissiontype");
 
-                    b.ToTable("PermissionType");
+                    b.ToTable("permissiontype", (string)null);
 
                     b.HasData(
                         new
@@ -310,461 +359,585 @@ namespace WMS_backend.Migrations
                 {
                     b.Property<Guid>("ProductId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("newsequentialid()");
+                        .HasColumnType("uuid")
+                        .HasColumnName("productid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<string>("Barcode")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("barcode");
 
                     b.Property<string>("Barcode1")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("barcode1");
 
                     b.Property<string>("Barcode2")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("barcode2");
 
                     b.Property<string>("Barcode3")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("barcode3");
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("description");
 
                     b.Property<double?>("Height")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision")
+                        .HasColumnName("height");
 
                     b.Property<bool>("IsArchived")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("isarchived");
 
                     b.Property<double?>("Length")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision")
+                        .HasColumnName("length");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name");
 
                     b.Property<float>("PurchasePrice")
-                        .HasColumnType("real");
+                        .HasColumnType("real")
+                        .HasColumnName("purchaseprice");
 
                     b.Property<float>("RetailPrice")
-                        .HasColumnType("real");
+                        .HasColumnType("real")
+                        .HasColumnName("retailprice");
 
                     b.Property<string>("SKU")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("sku");
 
                     b.Property<Guid?>("SupplierId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("supplierid");
 
                     b.Property<float>("TaxRate")
-                        .HasColumnType("real");
+                        .HasColumnType("real")
+                        .HasColumnName("taxrate");
 
                     b.Property<double?>("Weight")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision")
+                        .HasColumnName("weight");
 
                     b.Property<double?>("Width")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision")
+                        .HasColumnName("width");
 
-                    b.HasKey("ProductId");
+                    b.HasKey("ProductId")
+                        .HasName("pk_product");
 
-                    b.HasIndex("SupplierId");
+                    b.HasIndex("SupplierId")
+                        .HasDatabaseName("ix_product_supplierid");
 
-                    b.ToTable("Product");
+                    b.ToTable("product", (string)null);
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.PurchaseOrder", b =>
                 {
                     b.Property<Guid>("PurchaseOrderId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("newsequentialid()");
+                        .HasColumnType("uuid")
+                        .HasColumnName("purchaseorderid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<DateTime>("CreatedDateTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("createddatetime");
 
                     b.Property<DateTime>("ExpectedDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expecteddate");
 
                     b.Property<bool>("IsArchived")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("isarchived");
 
                     b.Property<Guid>("LocationId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("locationid");
 
                     b.Property<DateTime>("ModifiedDateTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("modifieddatetime");
 
                     b.Property<string>("Note")
                         .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("note");
 
                     b.Property<int>("POStatus")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("postatus");
 
                     b.Property<string>("PurchaseOrderNumber")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("purchaseordernumber");
 
                     b.Property<float>("Shipping")
-                        .HasColumnType("real");
+                        .HasColumnType("real")
+                        .HasColumnName("shipping");
 
                     b.Property<string>("ShippingCarrier")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("shippingcarrier");
 
                     b.Property<float>("Subtotal")
-                        .HasColumnType("real");
+                        .HasColumnType("real")
+                        .HasColumnName("subtotal");
 
                     b.Property<Guid>("SupplierId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("supplierid");
 
                     b.Property<float>("Tax")
-                        .HasColumnType("real");
+                        .HasColumnType("real")
+                        .HasColumnName("tax");
 
                     b.Property<float>("Total")
-                        .HasColumnType("real");
+                        .HasColumnType("real")
+                        .HasColumnName("total");
 
                     b.Property<string>("TrackingNumber")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("trackingnumber");
 
                     b.Property<int>("UnitOrders")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("unitorders");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("userid");
 
-                    b.HasKey("PurchaseOrderId");
+                    b.HasKey("PurchaseOrderId")
+                        .HasName("pk_purchaseorder");
 
-                    b.HasIndex("LocationId");
+                    b.HasIndex("LocationId")
+                        .HasDatabaseName("ix_purchaseorder_locationid");
 
-                    b.HasIndex("SupplierId");
+                    b.HasIndex("SupplierId")
+                        .HasDatabaseName("ix_purchaseorder_supplierid");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_purchaseorder_userid");
 
-                    b.ToTable("PurchaseOrder");
+                    b.ToTable("purchaseorder", (string)null);
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.PurchaseOrderItem", b =>
                 {
                     b.Property<Guid>("PurchaseOrderItemId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("newsequentialid()");
+                        .HasColumnType("uuid")
+                        .HasColumnName("purchaseorderitemid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("productid");
 
                     b.Property<Guid>("PurchaseOrderId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("purchaseorderid");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity");
 
-                    b.HasKey("PurchaseOrderItemId");
+                    b.HasKey("PurchaseOrderItemId")
+                        .HasName("pk_purchaseorderitem");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductId")
+                        .HasDatabaseName("ix_purchaseorderitem_productid");
 
-                    b.HasIndex("PurchaseOrderId");
+                    b.HasIndex("PurchaseOrderId")
+                        .HasDatabaseName("ix_purchaseorderitem_purchaseorderid");
 
-                    b.ToTable("PurchaseOrderItem");
+                    b.ToTable("purchaseorderitem", (string)null);
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.PurchaseRequest", b =>
                 {
                     b.Property<Guid>("PurchaseRequestId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("newsequentialid()");
+                        .HasColumnType("uuid")
+                        .HasColumnName("purchaserequestid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<DateTime>("CreatedDateTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("createddatetime");
 
                     b.Property<bool>("IsArchived")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("isarchived");
 
                     b.Property<string>("MessageFromTeam")
                         .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("messagefromteam");
 
                     b.Property<string>("MessageToTeam")
                         .IsRequired()
                         .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("messagetoteam");
 
                     b.Property<int>("Staus")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("staus");
 
                     b.Property<Guid>("TeamId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("teamid");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("userid");
 
-                    b.HasKey("PurchaseRequestId");
+                    b.HasKey("PurchaseRequestId")
+                        .HasName("pk_purchaserequest");
 
-                    b.HasIndex("TeamId");
+                    b.HasIndex("TeamId")
+                        .HasDatabaseName("ix_purchaserequest_teamid");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_purchaserequest_userid");
 
-                    b.ToTable("PurchaseRequest");
+                    b.ToTable("purchaserequest", (string)null);
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.Rack", b =>
                 {
                     b.Property<Guid>("RackId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("newsequentialid()");
+                        .HasColumnType("uuid")
+                        .HasColumnName("rackid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<bool>("IsArchived")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("isarchived");
 
                     b.Property<Guid>("LoactionId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("loactionid");
 
                     b.Property<Guid>("LocationId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("locationid");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name");
 
                     b.Property<int>("XSlotMax")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("xslotmax");
 
                     b.Property<int>("YSlotMax")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("yslotmax");
 
-                    b.HasKey("RackId");
+                    b.HasKey("RackId")
+                        .HasName("pk_rack");
 
-                    b.HasIndex("LocationId");
+                    b.HasIndex("LocationId")
+                        .HasDatabaseName("ix_rack_locationid");
 
-                    b.ToTable("Rack");
+                    b.ToTable("rack", (string)null);
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.Supplier", b =>
                 {
                     b.Property<Guid>("SupplierId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("newsequentialid()");
+                        .HasColumnType("uuid")
+                        .HasColumnName("supplierid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<string>("Address")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("address");
 
                     b.Property<string>("Contact")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("contact");
 
                     b.Property<string>("Email")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("email");
 
                     b.Property<bool>("IsArchived")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("isarchived");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("phone");
 
                     b.Property<Guid>("TeamId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("teamid");
 
-                    b.HasKey("SupplierId");
+                    b.HasKey("SupplierId")
+                        .HasName("pk_supplier");
 
-                    b.HasIndex("TeamId");
+                    b.HasIndex("TeamId")
+                        .HasDatabaseName("ix_supplier_teamid");
 
-                    b.ToTable("Supplier");
+                    b.ToTable("supplier", (string)null);
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.Team", b =>
                 {
                     b.Property<Guid>("TeamId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("newsequentialid()");
+                        .HasColumnType("uuid")
+                        .HasColumnName("teamid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("companyid");
 
                     b.Property<bool>("IsArchived")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("isarchived");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name");
 
-                    b.HasKey("TeamId");
+                    b.HasKey("TeamId")
+                        .HasName("pk_team");
 
-                    b.HasIndex("CompanyId");
+                    b.HasIndex("CompanyId")
+                        .HasDatabaseName("ix_team_companyid");
 
-                    b.ToTable("Team");
+                    b.ToTable("team", (string)null);
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.TeamLocation", b =>
                 {
                     b.Property<Guid>("TeamLocationId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("newsequentialid()");
+                        .HasColumnType("uuid")
+                        .HasColumnName("teamlocationid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<Guid>("LocationId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("locationid");
 
                     b.Property<Guid>("TeamId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("teamid");
 
-                    b.HasKey("TeamLocationId");
+                    b.HasKey("TeamLocationId")
+                        .HasName("pk_teamlocation");
 
-                    b.HasIndex("LocationId");
+                    b.HasIndex("LocationId")
+                        .HasDatabaseName("ix_teamlocation_locationid");
 
-                    b.HasIndex("TeamId");
+                    b.HasIndex("TeamId")
+                        .HasDatabaseName("ix_teamlocation_teamid");
 
-                    b.ToTable("TeamLocation");
+                    b.ToTable("teamlocation", (string)null);
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.TeamUser", b =>
                 {
                     b.Property<Guid>("TeamUserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("newsequentialid()");
+                        .HasColumnType("uuid")
+                        .HasColumnName("teamuserid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<Guid>("TeamId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("teamid");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("userid");
 
-                    b.HasKey("TeamUserId");
+                    b.HasKey("TeamUserId")
+                        .HasName("pk_teamuser");
 
-                    b.HasIndex("TeamId");
+                    b.HasIndex("TeamId")
+                        .HasDatabaseName("ix_teamuser_teamid");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_teamuser_userid");
 
-                    b.ToTable("TeamUser");
+                    b.ToTable("teamuser", (string)null);
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.User", b =>
                 {
                     b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("newsequentialid()");
+                        .HasColumnType("uuid")
+                        .HasColumnName("userid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("companyid");
 
                     b.Property<DateTime>("CreatedDateTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("createddatetime");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("email");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("firstname");
 
                     b.Property<bool>("IsArchived")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("isarchived");
 
                     b.Property<DateTime?>("LastLoginDateTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("lastlogindatetime");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("lastname");
 
                     b.Property<DateTime>("ModifiedDateTime")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("modifieddatetime");
 
                     b.Property<Guid?>("ModifiedUserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("modifieduserid");
 
                     b.Property<byte[]>("PasswordHash")
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("bytea")
+                        .HasColumnName("passwordhash");
 
                     b.Property<byte[]>("PasswordSalt")
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("bytea")
+                        .HasColumnName("passwordsalt");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("phone");
 
-                    b.HasKey("UserId");
+                    b.HasKey("UserId")
+                        .HasName("pk_user");
 
-                    b.HasIndex("CompanyId");
+                    b.HasIndex("CompanyId")
+                        .HasDatabaseName("ix_user_companyid");
 
-                    b.HasIndex("ModifiedUserId");
+                    b.HasIndex("ModifiedUserId")
+                        .HasDatabaseName("ix_user_modifieduserid");
 
-                    b.ToTable("User");
+                    b.ToTable("user", (string)null);
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.UserPermission", b =>
                 {
                     b.Property<Guid>("UserPermissionId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("newsequentialid()");
+                        .HasColumnType("uuid")
+                        .HasColumnName("userpermissionid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<bool>("IsCrud")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean")
+                        .HasColumnName("iscrud");
 
                     b.Property<int>("PermissionType")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("permissiontype");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("userid");
 
-                    b.HasKey("UserPermissionId");
+                    b.HasKey("UserPermissionId")
+                        .HasName("pk_userpermission");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_userpermission_userid");
 
-                    b.ToTable("UserPermission");
+                    b.ToTable("userpermission", (string)null);
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.UserPreference", b =>
                 {
                     b.Property<Guid>("UserPreferenceId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("newsequentialid()");
+                        .HasColumnType("uuid")
+                        .HasColumnName("userpreferenceid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<int>("PreferenceType")
-                        .HasColumnType("int");
+                        .HasColumnType("integer")
+                        .HasColumnName("preferencetype");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid")
+                        .HasColumnName("userid");
 
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("value");
 
-                    b.HasKey("UserPreferenceId");
+                    b.HasKey("UserPreferenceId")
+                        .HasName("pk_userpreference");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_userpreference_userid");
 
-                    b.ToTable("UserPreference");
+                    b.ToTable("userpreference", (string)null);
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.CompanyPermission", b =>
@@ -772,8 +945,9 @@ namespace WMS_backend.Migrations
                     b.HasOne("WMS_backend.Models.DBModels.Company", "Company")
                         .WithMany("CompanyPermissions")
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_companypermission_company_companyid");
 
                     b.Navigation("Company");
                 });
@@ -783,20 +957,23 @@ namespace WMS_backend.Migrations
                     b.HasOne("WMS_backend.Models.DBModels.Product", "Product")
                         .WithMany("Inventories")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_inventory_product_productid");
 
                     b.HasOne("WMS_backend.Models.DBModels.Rack", "Rack")
                         .WithMany("Inventories")
                         .HasForeignKey("RackId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_inventory_rack_rackid");
 
                     b.HasOne("WMS_backend.Models.DBModels.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_inventory_user_userid");
 
                     b.Navigation("Product");
 
@@ -810,8 +987,9 @@ namespace WMS_backend.Migrations
                     b.HasOne("WMS_backend.Models.DBModels.Company", "Company")
                         .WithMany("Locations")
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_location_company_companyid");
 
                     b.Navigation("Company");
                 });
@@ -821,8 +999,9 @@ namespace WMS_backend.Migrations
                     b.HasOne("WMS_backend.Models.DBModels.User", "User")
                         .WithMany("Notifications")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_notification_user_userid");
 
                     b.Navigation("User");
                 });
@@ -832,7 +1011,7 @@ namespace WMS_backend.Migrations
                     b.HasOne("WMS_backend.Models.DBModels.Supplier", "Supplier")
                         .WithMany("Products")
                         .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasConstraintName("fk_product_supplier_supplierid");
 
                     b.Navigation("Supplier");
                 });
@@ -842,20 +1021,23 @@ namespace WMS_backend.Migrations
                     b.HasOne("WMS_backend.Models.DBModels.Location", "Location")
                         .WithMany("PurchaseOrders")
                         .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_purchaseorder_location_locationid");
 
                     b.HasOne("WMS_backend.Models.DBModels.Supplier", "Supplier")
                         .WithMany("PurchaseOrders")
                         .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_purchaseorder_supplier_supplierid");
 
                     b.HasOne("WMS_backend.Models.DBModels.User", "User")
                         .WithMany("PurchaseOrders")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_purchaseorder_user_userid");
 
                     b.Navigation("Location");
 
@@ -869,14 +1051,16 @@ namespace WMS_backend.Migrations
                     b.HasOne("WMS_backend.Models.DBModels.Product", "Product")
                         .WithMany("PurchaseOrderItems")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_purchaseorderitem_product_productid");
 
                     b.HasOne("WMS_backend.Models.DBModels.PurchaseOrder", "PurchaseOrder")
                         .WithMany("PurchaseOrderItems")
                         .HasForeignKey("PurchaseOrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_purchaseorderitem_purchaseorder_purchaseorderid");
 
                     b.Navigation("Product");
 
@@ -888,14 +1072,16 @@ namespace WMS_backend.Migrations
                     b.HasOne("WMS_backend.Models.DBModels.Team", "Team")
                         .WithMany("PurchaseRequests")
                         .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_purchaserequest_team_teamid");
 
                     b.HasOne("WMS_backend.Models.DBModels.User", "User")
                         .WithMany("PurchaseRequests")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_purchaserequest_user_userid");
 
                     b.Navigation("Team");
 
@@ -907,8 +1093,9 @@ namespace WMS_backend.Migrations
                     b.HasOne("WMS_backend.Models.DBModels.Location", "Location")
                         .WithMany()
                         .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_rack_location_locationid");
 
                     b.Navigation("Location");
                 });
@@ -918,8 +1105,9 @@ namespace WMS_backend.Migrations
                     b.HasOne("WMS_backend.Models.DBModels.Team", "Team")
                         .WithMany("Suppliers")
                         .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_supplier_team_teamid");
 
                     b.Navigation("Team");
                 });
@@ -929,8 +1117,9 @@ namespace WMS_backend.Migrations
                     b.HasOne("WMS_backend.Models.DBModels.Company", "Company")
                         .WithMany("Teams")
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_team_company_companyid");
 
                     b.Navigation("Company");
                 });
@@ -940,14 +1129,16 @@ namespace WMS_backend.Migrations
                     b.HasOne("WMS_backend.Models.DBModels.Location", "Location")
                         .WithMany("TeamLocations")
                         .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_teamlocation_location_locationid");
 
                     b.HasOne("WMS_backend.Models.DBModels.Team", "Team")
                         .WithMany("TeamLocations")
                         .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_teamlocation_team_teamid");
 
                     b.Navigation("Location");
 
@@ -959,14 +1150,16 @@ namespace WMS_backend.Migrations
                     b.HasOne("WMS_backend.Models.DBModels.Team", "Team")
                         .WithMany("TeamUsers")
                         .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_teamuser_team_teamid");
 
                     b.HasOne("WMS_backend.Models.DBModels.User", "User")
                         .WithMany("TeamUsers")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_teamuser_user_userid");
 
                     b.Navigation("Team");
 
@@ -978,13 +1171,14 @@ namespace WMS_backend.Migrations
                     b.HasOne("WMS_backend.Models.DBModels.Company", "Company")
                         .WithMany("Users")
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_company_companyid");
 
                     b.HasOne("WMS_backend.Models.DBModels.User", "ModifiedUser")
                         .WithMany()
                         .HasForeignKey("ModifiedUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasConstraintName("fk_user_user_modifieduserid");
 
                     b.Navigation("Company");
 
@@ -996,8 +1190,9 @@ namespace WMS_backend.Migrations
                     b.HasOne("WMS_backend.Models.DBModels.User", "User")
                         .WithMany("UserPermissions")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_userpermission_user_userid");
 
                     b.Navigation("User");
                 });
@@ -1007,8 +1202,9 @@ namespace WMS_backend.Migrations
                     b.HasOne("WMS_backend.Models.DBModels.User", "User")
                         .WithMany("UserPreferences")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_userpreference_user_userid");
 
                     b.Navigation("User");
                 });

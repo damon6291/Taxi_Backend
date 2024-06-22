@@ -145,6 +145,23 @@ namespace WMS_backend.Managers
             }
         }
 
+        public async Task<(bool, object)> GetMe(Guid userId)
+        {
+            try
+            {
+                var user = await GetUser(userId);
+                if (user == null) return (false, "User does not exist");
+
+                var userDTO = UserMapper.UserToDTO(user);
+
+                return (true, userDTO);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+
         private string CreateToken(Guid userId, bool isTemporary)
         {
             string? token;
