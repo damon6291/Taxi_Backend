@@ -56,20 +56,6 @@ namespace WMS_backend.Controllers
             return Ok(ret.Success(obj));
         }
 
-        [HttpGet("menu")]
-        public async Task<IActionResult> GetMenu()
-        {
-            var ret = new ReturnModel();
-            var userId = userService.GetUserId();
-            if (userId == null) return Ok(ret.Logout());
-
-            var (res, obj) = await permissionManager.GetMenu((Guid)userId);
-
-            if (!res) return Ok(ret.Fail(obj.ToString()));
-
-            return Ok(ret.Success(obj));
-        }
-
         [HttpPut("upsert/{updateUserId}")]
         public async Task<IActionResult> UpsertUserPermission(Guid updateUserId, List<UserPermissionDTO> permissions)
         {

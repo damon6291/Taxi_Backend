@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using WMS_backend.Data;
 using WMS_backend.Mapper;
 using WMS_backend.Models.Auth;
@@ -82,6 +83,32 @@ namespace WMS_backend.Managers
                 var token = CreateToken(user.UserId, false);
                 emailService.SendWelcomeEmail(newUser.Email, token);
 
+                return (true, string.Empty);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+
+        public async Task<(bool, string)> RegisterAdmin()
+        {
+            try
+            {
+                var activeUser = await GetActiveUserByEmail("damon6291@gmail.com");
+                if (activeUser != null) return (false, "Already exist");
+                var user = new User
+                {
+                    Email = "damon6291@gmail.com",
+                    FirstName = "Damon",
+                    LastName = "Joung",
+                };
+                userService.CreatePasswordHash("1234", out var passwordHash, out var passwordSalt);
+                user.PasswordSalt = passwordSalt;
+                user.PasswordHash = passwordHash;
+                context.Add(user);
+                await context.SaveChangesAsync();
+                await context.PermissionType.InsertFromQueryAsync("userpermission", x => new { userid = user.UserId, permissiontype = x.PermissionTypeId, iscrud = true });
                 return (true, string.Empty);
             }
             catch (Exception ex)

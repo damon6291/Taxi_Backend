@@ -5,7 +5,7 @@ namespace WMS_backend.Models.DBModels
     public class User
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid UserId { get; set; }
+        public Guid UserId { get; set; } = Guid.NewGuid();
         public string Email { get; set; } = string.Empty;
         public byte[]? PasswordHash { get; set; }
         public byte[]? PasswordSalt { get; set; }
@@ -18,10 +18,10 @@ namespace WMS_backend.Models.DBModels
         public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
         public DateTime ModifiedDateTime { get; set; } = DateTime.UtcNow;
         public Guid? ModifiedUserId { get; set; }
-        public Guid CompanyId { get; set; }
+        public Guid? CompanyId { get; set; }
         [ForeignKey("ModifiedUserId")]
         public virtual User? ModifiedUser { get; set; }
-        public virtual Company Company { get; set; }
+        public virtual Company? Company { get; set; }
 
         public virtual ICollection<TeamUser> TeamUsers { get; set; } = new HashSet<TeamUser>();
         public virtual ICollection<UserPermission> UserPermissions { get; set; } = new HashSet<UserPermission>();

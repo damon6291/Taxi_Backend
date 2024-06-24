@@ -19,22 +19,6 @@ namespace WMS_backend.Managers
             this.context = context;
             this.authManager = authManager;
         }
-        public async Task<(bool, object)> GetMenu(Guid userId)
-        {
-            var user = await authManager.GetUser(userId);
-            if (user == null) return (false, "User does not exist");
-
-            var userPermission = await context.UserPermission.Where(x => x.UserId == userId).Select(x => x.PermissionType).ToListAsync();
-
-            var menu = userPermission.GroupBy(x => x.GetAttributeOfType<DisplayAttribute>().GroupName)
-                .Select(x => new MenuDTO() { Name = x.Key ?? "", Children = x.Select(x => new MenuDTO() { Name = x.ToString(), URL = x.GetAttributeOfType<DisplayAttribute>().Description ?? "" }).ToList() })
-                .ToList();
-
-            menu.Insert(0, new MenuDTO() { Name = "Dashboard", URL = "/dashboard/root" });
-            menu.FirstOrDefault(x => x.Name == "Setting")?.Children.Insert(0, new MenuDTO() { Name = "Preference", URL = "/dashboard/setting/preference" });
-
-            return (true, menu);
-        }
 
         public async Task<(bool, object)> GetUserPermission(Guid userId)
         {

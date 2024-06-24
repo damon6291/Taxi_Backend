@@ -19,6 +19,7 @@ namespace WMS_backend.Mapper
                 LastLoginDateTime = user.LastLoginDateTime,
                 ModifiedDateTime = user.ModifiedDateTime,
                 ModifiedUser = user.ModifiedUser == null ? null : UserToDTO(user.ModifiedUser),
+                IsAdmin = user.CompanyId == null,
             };
         }
 

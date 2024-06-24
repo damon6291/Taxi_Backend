@@ -1,7 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Cryptography;
+using System.Text;
 using WMS_backend.Models.DBModels;
 using WMS_backend.Models.Enums;
+using WMS_backend.Services;
 
 namespace WMS_backend.Data
 {
@@ -57,6 +61,7 @@ namespace WMS_backend.Data
                       Name = e.ToString()
                   })
             );
+
             modelBuilder.Entity<Company>(a =>
             {
                

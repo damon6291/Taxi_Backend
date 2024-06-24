@@ -12,5 +12,6 @@
         public DateTime? CreatedDateTime { get; set; }
         public DateTime? ModifiedDateTime { get; set; }
         public UserDTO? ModifiedUser { get; set; }
+        public bool IsAdmin { get; set; } = false;
     }
 }

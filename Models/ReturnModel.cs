@@ -4,7 +4,7 @@
     {
         public bool IsSuccess { get; set; } = false;
         public bool IsLogout { get; set; } = false;
-        public object Results { get; set; } = new object();
+        public object Result { get; set; } = new object();
         public List<string> ErrorMessages { get; set; } = new List<string>();
 
         public ReturnModel Fail(string str)
@@ -34,7 +34,7 @@
         public ReturnModel Success(object data)
         {
             IsSuccess = true;
-            Results = data;
+            Result = data;
             return this;
         }
         public ReturnModel Success()

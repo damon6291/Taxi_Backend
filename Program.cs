@@ -87,6 +87,9 @@ using (var scope = app.Services.CreateScope())
     {
         context.Database.Migrate();
     }
+
+    var authManager = services.GetRequiredService<AuthManager>();
+    await authManager.RegisterAdmin();
 }
 
 app.Run();
