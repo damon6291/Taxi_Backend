@@ -15,7 +15,9 @@ namespace WMS_backend.Models.DBModels
         public Guid CompanyId { get; set; }
         public virtual Company Company { get; set; }
 
-        public virtual ICollection<TeamLocation> TeamLocations { get; set; } = new HashSet<TeamLocation>();
         public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new HashSet<PurchaseOrder>();
+        public virtual ICollection<Rack> Racks { get; set; } = new HashSet<Rack>();
+        public virtual ICollection<Tote> Totes { get; set; } = new HashSet<Tote>();
+
     }
 }

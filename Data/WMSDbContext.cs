@@ -27,8 +27,8 @@ namespace WMS_backend.Data
         public virtual DbSet<Rack> Rack { get; set; }
         public virtual DbSet<Supplier> Supplier { get; set; }
         public virtual DbSet<Team> Team { get; set; }
-        public virtual DbSet<TeamLocation> TeamLocation { get; set; }
         public virtual DbSet<TeamUser> TeamUser { get; set; }
+        public virtual DbSet<TeamUser> Tote { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserPermission> UserPermission { get; set; }
         public virtual DbSet<UserPreference> UserPreference { get; set; }
@@ -110,11 +110,11 @@ namespace WMS_backend.Data
             {
 
             });
-            modelBuilder.Entity<TeamLocation>(a =>
+            modelBuilder.Entity<TeamUser>(a =>
             {
 
             });
-            modelBuilder.Entity<TeamUser>(a =>
+            modelBuilder.Entity<Tote>(a =>
             {
 
             });

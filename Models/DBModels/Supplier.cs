@@ -12,8 +12,8 @@ namespace WMS_backend.Models.DBModels
         public string? Phone { get; set; }
         public string? Email { get; set; }
         public bool IsArchived { get; set; } = false;
-        public Guid TeamId { get; set; }
-        public virtual Team Team { get; set; }
+        public Guid CompanyId { get; set; }
+        public virtual Company Company { get; set; }
         public virtual ICollection<Product> Products { get; set; } = new HashSet<Product>();
         public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new HashSet<PurchaseOrder>();
     }

@@ -20,5 +20,6 @@ namespace WMS_backend.Models.DBModels
         public virtual ICollection<Team> Teams { get; set; } = new HashSet<Team>();
         public virtual ICollection<Location> Locations { get; set; } = new HashSet<Location>();
         public virtual ICollection<CompanyPermission> CompanyPermissions { get; set; } = new HashSet<CompanyPermission>();
+        public virtual ICollection<Supplier> Suppliers { get; set; } = new HashSet<Supplier>();
     }
 }
