@@ -1,5 +1,5 @@
-﻿using WMS_backend.Models.Auth;
-using WMS_backend.Models.DBModels;
+﻿using WMS_backend.Models.DBModels;
+using WMS_backend.Models.User;
 
 namespace WMS_backend.Mapper
 {
@@ -33,5 +33,19 @@ namespace WMS_backend.Mapper
                 Phone = dto.Phone,
             };
         }
+
+
+        public static NotificationDTO NotificationToDTO(Notification db)
+        {
+            return new NotificationDTO()
+            {
+                NotificationId= db.NotificationId,
+                NotificationType=db.NotificationType.ToString(),
+                Name=db.Name,
+                Description=db.Description,
+                CreatedDateTime = db.CreatedDateTime,
+            };
+        }
+
     }
 }

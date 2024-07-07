@@ -22,6 +22,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddScoped<AuthManager>();
 builder.Services.AddScoped<PermissionManager>();
+builder.Services.AddScoped<UserManager>();
 
 builder.Services.AddDbContext<WMSDbContext>(options => options.UseNpgsql(conn).UseLowerCaseNamingConvention());
 

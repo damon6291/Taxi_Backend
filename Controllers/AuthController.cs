@@ -5,6 +5,7 @@ using WMS_backend.Managers;
 using WMS_backend.Models;
 using WMS_backend.Models.Auth;
 using WMS_backend.Models.Enums;
+using WMS_backend.Models.User;
 using WMS_backend.Services;
 
 namespace WMS_backend.Controllers
@@ -30,24 +31,6 @@ namespace WMS_backend.Controllers
             if (!res) return Ok(ret.Fail());
 
             ret.Success(new { token = msg });
-
-            return Ok(ret);
-        }
-
-
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> GetMe()
-        {
-            var ret = new ReturnModel();
-            var userId = userService.GetUserId();
-            if (userId == null) return Ok(ret.Logout());
-
-            var (res, msg) = await authManager.GetMe((Guid)userId);
-
-            if (!res) return Ok(ret.Fail(msg.ToString()));
-
-            ret.Success(msg);
 
             return Ok(ret);
         }

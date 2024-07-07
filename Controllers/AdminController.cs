@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WMS_backend.Managers;
-using WMS_backend.Models.Auth;
 using WMS_backend.Models;
 using WMS_backend.Services;
 using WMS_backend.Data;
 using WMS_backend.Mapper;
 using WMS_backend.Models.DBModels;
 using Microsoft.AspNetCore.Identity;
+using WMS_backend.Models.User;
 
 namespace WMS_backend.Controllers
 {
