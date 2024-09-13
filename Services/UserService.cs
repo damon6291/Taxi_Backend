@@ -48,7 +48,7 @@ namespace WMS_backend.Services
 
         public string CreateToken(Guid userId)
         {
-            return CreateToken(userId, DateTime.UtcNow.AddHours(12));
+            return CreateToken(userId, DateTime.UtcNow.AddMinutes(30));
         }
 
         public string CreateTemporaryToken(Guid userId)

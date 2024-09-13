@@ -26,6 +26,7 @@ namespace WMS_backend.Controllers
             this.context = context;
         }
 
+        // Test endpoint to encrypt password
         [HttpPost("password")]
         public IActionResult Password(string password)
         {
@@ -37,6 +38,7 @@ namespace WMS_backend.Controllers
             return Ok(ret);
         }
 
+        // Create user for the company
         [HttpPost("user")]
         public async Task<IActionResult> User(UserDTO dto, string companyId)
         {
