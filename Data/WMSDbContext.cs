@@ -11,8 +11,11 @@ namespace WMS_backend.Data
 {
     public class WMSDbContext : DbContext
     {
-        public WMSDbContext(DbContextOptions options) : base(options)
+        private readonly DataGenerator dataGenerator;
+
+        public WMSDbContext(DbContextOptions options, DataGenerator dataGenerator) : base(options)
         {
+            this.dataGenerator = dataGenerator;
         }
         public virtual DbSet<Company> Company { get; set; }
         public virtual DbSet<CompanyPermission> CompanyPermission { get; set; }
@@ -130,6 +133,9 @@ namespace WMS_backend.Data
             {
 
             });
+
+            modelBuilder.Entity<Company>().HasData(dataGenerator.GenerateCompany());
+            modelBuilder.Entity<User>().HasData(dataGenerator.GenerateUser());
         }
     }
 

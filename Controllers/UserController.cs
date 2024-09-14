@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using WMS_backend.Managers;
+using WMS_backend.Mapper;
 using WMS_backend.Models;
+using WMS_backend.Models.User;
 using WMS_backend.Services;
 
 namespace WMS_backend.Controllers
@@ -49,6 +52,26 @@ namespace WMS_backend.Controllers
 
             ret.Success(msg);
 
+            return Ok(ret);
+        }
+
+        [HttpGet("list")]
+        public async Task<IActionResult> GetUsersList([Required] int pageNumber, [Required] int pageSize, string orderColumn = "", bool isAscending = true, string userName = "")
+        {
+            var ret = new ReturnModel();
+            var userId = userService.GetUserId();
+            if (userId == null) return Ok(ret.Logout());
+
+            Page page = new Page(pageNumber, pageSize, orderColumn, isAscending);
+            List<Filter> filters = new List<Filter> { new Filter("Name", Op.Contains, userName)};
+            page.Filters = filters;
+            var (count, res) = await userManager.GetUsers(page);
+            List<UserDTO> dtos = new();
+            foreach (var user in res)
+            {
+                dtos.Add(UserMapper.UserToDTO(user));
+            }
+            ret.Success(new { count, users = dtos });
             return Ok(ret);
         }
     }

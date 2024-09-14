@@ -26,6 +26,8 @@ builder.Services.AddScoped<AuthManager>();
 builder.Services.AddScoped<PermissionManager>();
 builder.Services.AddScoped<UserManager>();
 
+builder.Services.AddTransient<DataGenerator>();
+
 builder.Services.AddDbContext<WMSDbContext>(options => options.UseNpgsql(conn).UseLowerCaseNamingConvention());
 
 

@@ -12,6 +12,7 @@ namespace WMS_backend.Models.DBModels
         public bool IsArchived { get; set; } = false;
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
+        public string Name => FirstName + " " + LastName;
         public string? Phone { get; set; }
 
         public DateTime? LastLoginDateTime { get; set; }

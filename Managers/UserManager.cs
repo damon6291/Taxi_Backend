@@ -1,5 +1,7 @@
 ﻿using WMS_backend.Data;
 using WMS_backend.Mapper;
+using WMS_backend.Models;
+using WMS_backend.Models.DBModels;
 using WMS_backend.Services;
 
 namespace WMS_backend.Managers
@@ -47,6 +49,19 @@ namespace WMS_backend.Managers
             catch (Exception ex)
             {
                 return (false, ex.Message);
+            }
+        }
+
+        public async Task<(int, List<User>)> GetUsers(Page page)
+        {
+            try
+            {
+                var activeUsers = context.User.Where(x => !x.IsArchived);
+                return await page.Get(activeUsers);
+            }
+            catch (Exception ex)
+            {
+                return (0, new List<User>());
             }
         }
 
