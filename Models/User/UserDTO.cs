@@ -7,6 +7,7 @@
         public bool IsArchived { get; set; } = false;
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string Name => FirstName + " " + LastName;
         public string? Phone { get; set; }
         public DateTime? LastLoginDateTime { get; set; }
         public DateTime? CreatedDateTime { get; set; }
