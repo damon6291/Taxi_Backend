@@ -12,7 +12,7 @@ namespace WMS_backend.Models.DBModels
         public string? Description { get; set; }
         public bool IsArchived { get; set; } = false;
         public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
-        public Guid UserId { get; set; }
-        public virtual User User { get; set; }
+        public long UserId { get; set; }
+        public virtual AppUser User { get; set; }
     }
 }

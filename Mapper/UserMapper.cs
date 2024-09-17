@@ -5,16 +5,16 @@ namespace WMS_backend.Mapper
 {
     public static class UserMapper
     {
-        public static UserDTO UserToDTO(User user)
+        public static UserDTO UserToDTO(AppUser user)
         {
             return new UserDTO()
             {
-                UserId = user.UserId,
+                Id = user.Id,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 IsArchived = user.IsArchived,
-                Phone = user.Phone,
+                PhoneNumber = user.PhoneNumber,
                 CreatedDateTime = user.CreatedDateTime,
                 LastLoginDateTime = user.LastLoginDateTime,
                 ModifiedDateTime = user.ModifiedDateTime,
@@ -23,14 +23,14 @@ namespace WMS_backend.Mapper
             };
         }
 
-        public static User DTOToUser(UserDTO dto)
+        public static AppUser DTOToUser(UserDTO dto)
         {
-            return new User()
+            return new AppUser()
             {
                 Email = dto.Email,
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
-                Phone = dto.Phone,
+                PhoneNumber = dto.PhoneNumber,
             };
         }
 

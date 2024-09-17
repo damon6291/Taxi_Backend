@@ -20,7 +20,7 @@ namespace WMS_backend.Managers
             this.authManager = authManager;
         }
 
-        public async Task<(bool, object)> GetUserPermission(Guid userId)
+        public async Task<(bool, object)> GetUserPermission(long userId)
         {
             var user = await authManager.GetUser(userId);
             if (user == null) return (false, "User does not exist");
@@ -30,7 +30,7 @@ namespace WMS_backend.Managers
             return (true, userPermission);
         }
 
-        public async Task<(bool, object)> GetCompanyPermission(Guid userId)
+        public async Task<(bool, object)> GetCompanyPermission(long userId)
         {
             var user = await authManager.GetUser(userId);
             if (user == null) return (false, "User does not exist");
@@ -40,7 +40,7 @@ namespace WMS_backend.Managers
             return (true, companyPermissions);
         }
 
-        public async Task<(bool, object)> UpsertUserPermission(Guid userId, List<UserPermissionDTO> permissions)
+        public async Task<(bool, object)> UpsertUserPermission(long userId, List<UserPermissionDTO> permissions)
         {
             List<UserPermission> userPermissions = new();
             foreach (var permission in permissions)

@@ -5,7 +5,7 @@ namespace WMS_backend.Data
 {
     public class DataGenerator
     {
-        Faker<User> userFake;
+        Faker<AppUser> userFake;
         Faker<Company> companyFake;
         List<Company> company;
         public DataGenerator()
@@ -15,8 +15,9 @@ namespace WMS_backend.Data
 
         public List<Company> GenerateCompany()
         {
+            var companyId = 10000;
             companyFake = new Faker<Company>()
-                .RuleFor(u => u.CompanyId, f => f.Random.Guid())
+                .RuleFor(u => u.CompanyId, f => companyId++)
                 .RuleFor(u => u.Name, f => f.Name.FullName())
                 .RuleFor(u => u.IsArchived, f => false)
                 .RuleFor(u => u.CreatedDateTime, f => f.Date.Recent().ToUniversalTime());
@@ -26,10 +27,11 @@ namespace WMS_backend.Data
             return company;
         }
 
-        public List<User> GenerateUser()
+        public List<AppUser> GenerateUser()
         {
-            userFake = new Faker<User>()
-                .RuleFor(u => u.UserId, f => f.Random.Guid())
+            var userId = 10000;
+            userFake = new Faker<AppUser>()
+                .RuleFor(u => u.Id, f => userId++)
                 .RuleFor(u => u.Email, f => f.Internet.Email())
                 .RuleFor(u => u.FirstName, f => f.Name.FirstName())
                 .RuleFor(u => u.LastName, f => f.Name.LastName())

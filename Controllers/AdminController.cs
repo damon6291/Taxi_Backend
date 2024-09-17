@@ -26,35 +26,7 @@ namespace WMS_backend.Controllers
             this.context = context;
         }
 
-        // Test endpoint to encrypt password
-        [HttpPost("password")]
-        public IActionResult Password(string password)
-        {
-            var ret = new ReturnModel();
-            userService.CreatePasswordHash(password, out var passwordHash, out var passwordSalt);
 
-            ret.Success(new { passwordHash, passwordSalt });
 
-            return Ok(ret);
-        }
-
-        // Create user for the company
-        [HttpPost("user")]
-        public async Task<IActionResult> User(UserDTO dto, string companyId)
-        {
-            var ret = new ReturnModel();
-
-            var newUser = UserMapper.DTOToUser(dto);
-            newUser.CompanyId = new Guid(companyId);
-            userService.CreatePasswordHash("password", out var passwordHash, out var passwordSalt);
-            newUser.PasswordSalt = passwordSalt;
-            newUser.PasswordHash = passwordHash;
-            context.Add(newUser);
-            await context.SaveChangesAsync();
-
-            ret.Success(newUser);
-
-            return Ok(ret);
-        }
     }
 }

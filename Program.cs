@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using WMS_backend.Models.DBModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,7 +31,11 @@ builder.Services.AddTransient<DataGenerator>();
 
 builder.Services.AddDbContext<WMSDbContext>(options => options.UseNpgsql(conn).UseLowerCaseNamingConvention());
 
+builder.Services.AddAuthorization();
 
+builder.Services.AddIdentityCore<AppUser>()
+    .AddEntityFrameworkStores<WMSDbContext>()
+    .AddApiEndpoints();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddHttpContextAccessor();
@@ -47,17 +52,8 @@ builder.Services.AddSwaggerGen(options =>
 
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(token)),
-        ValidateIssuer = false,
-        ValidateAudience = false
-    };
-});
+builder.Services.AddAuthentication()
+    .AddBearerToken(IdentityConstants.BearerScheme);
 
 
 builder.Services.AddCors(options => options.AddPolicy(name: "corsapp", policy =>
@@ -73,6 +69,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(x => x.DocExpansion(docExpansion: Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None));
 }
+
+app.MapCustomIdentityApi<AppUser>();
 
 
 app.UseCors("corsapp");
@@ -94,8 +92,6 @@ using (var scope = app.Services.CreateScope())
         context.Database.Migrate();
     }
 
-    var authManager = services.GetRequiredService<AuthManager>();
-    await authManager.RegisterAdmin();
 }
 
 app.Run();

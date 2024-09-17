@@ -1,14 +1,11 @@
-﻿using WMS_backend.Models.Permission;
+﻿using WMS_backend.Models.DBModels;
+using WMS_backend.Models.Permission;
 
 namespace WMS_backend.Services
 {
     public interface IUserService
     {
-        /// <summary>
-        /// Get the user ID from http context
-        /// </summary>
-        /// <returns></returns>
-        public Guid? GetUserId();
+        public Task<AppUser?> GetUser();
         public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt);
         public bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt);
         /// <summary>

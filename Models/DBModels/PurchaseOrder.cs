@@ -12,7 +12,7 @@ namespace WMS_backend.Models.DBModels
         public EnumPOStatus POStatus { get; set; } = EnumPOStatus.Draft;
         public Guid LocationId { get; set; }
         public Guid SupplierId { get; set; }
-        public Guid UserId { get; set; }
+        public long UserId { get; set; }
         public DateTime ExpectedDate { get; set; }
         public string? ShippingCarrier { get; set; }
         public string? TrackingNumber { get; set; }
@@ -30,7 +30,7 @@ namespace WMS_backend.Models.DBModels
 
         public virtual Location Location { get; set; }
         public virtual Supplier Supplier { get; set; }
-        public virtual User User { get; set; }
+        public virtual AppUser User { get; set; }
 
         public virtual ICollection<PurchaseOrderItem> PurchaseOrderItems { get; set; } = new HashSet<PurchaseOrderItem>();
 

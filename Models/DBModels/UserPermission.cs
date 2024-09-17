@@ -7,9 +7,9 @@ namespace WMS_backend.Models.DBModels
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid UserPermissionId { get; set; }
-        public Guid UserId { get; set; }
+        public long UserId { get; set; }
         public EnumPermissionType PermissionType { get; set; }
         public bool IsCrud { get; set; } = false;
-        public virtual User User { get; set; }
+        public virtual AppUser User { get; set; }
     }
 }

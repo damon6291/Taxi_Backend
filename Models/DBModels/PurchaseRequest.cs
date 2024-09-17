@@ -8,7 +8,7 @@ namespace WMS_backend.Models.DBModels
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid PurchaseRequestId { get; set; }
-        public Guid UserId { get; set; }
+        public long UserId { get; set; }
         public Guid TeamId { get; set; }
         [MaxLength(2000)]
         public string MessageToTeam { get; set; } = string.Empty;
@@ -19,7 +19,7 @@ namespace WMS_backend.Models.DBModels
 
         public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
 
-        public virtual User User { get; set; }
+        public virtual AppUser User { get; set; }
         public virtual Team Team { get; set; }
     }
 }

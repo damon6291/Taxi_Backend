@@ -28,7 +28,7 @@
         {
             IsSuccess = false;
             IsLogout = true;
-            ErrorMessages.Add("PLease log in again");
+            ErrorMessages.Add("Please log in again");
             return this;
         }
         public ReturnModel Success(object data)

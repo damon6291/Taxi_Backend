@@ -6,9 +6,9 @@ namespace WMS_backend.Models.DBModels
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid TeamUserId { get; set; }
-        public Guid UserId { get; set; }
+        public long UserId { get; set; }
         public Guid TeamId { get; set; }
-        public virtual User User { get; set; }
+        public virtual AppUser User { get; set; }
         public virtual Team Team { get; set; }
 
     }

@@ -12,7 +12,7 @@ namespace WMS_backend.Models.DBModels
         public string? Phone { get; set; }
         public EnumLocationType LocationType { get; set; }
         public bool IsArchived { get; set; } = false;
-        public Guid CompanyId { get; set; }
+        public long CompanyId { get; set; }
         public virtual Company Company { get; set; }
 
         public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new HashSet<PurchaseOrder>();

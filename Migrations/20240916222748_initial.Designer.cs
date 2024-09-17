@@ -12,27 +12,332 @@ using WMS_backend.Data;
 namespace WMS_backend.Migrations
 {
     [DbContext(typeof(WMSDbContext))]
-    [Migration("20240624030928_default-user")]
-    partial class defaultuser
+    [Migration("20240916222748_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.20")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "uuid-ossp");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("claimtype");
+
+                    b.Property<string>("ClaimValue")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("claimvalue");
+
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("roleid");
+
+                    b.HasKey("Id")
+                        .HasName("pk_aspnetroleclaims");
+
+                    b.HasIndex("RoleId")
+                        .HasDatabaseName("ix_aspnetroleclaims_roleid");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("claimtype");
+
+                    b.Property<string>("ClaimValue")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("claimvalue");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("userid");
+
+                    b.HasKey("Id")
+                        .HasName("pk_aspnetuserclaims");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_aspnetuserclaims_userid");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<long>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("loginprovider");
+
+                    b.Property<string>("ProviderKey")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("providerkey");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("providerdisplayname");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("userid");
+
+                    b.HasKey("LoginProvider", "ProviderKey")
+                        .HasName("pk_aspnetuserlogins");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_aspnetuserlogins_userid");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<long>", b =>
+                {
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("userid");
+
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("roleid");
+
+                    b.HasKey("UserId", "RoleId")
+                        .HasName("pk_aspnetuserroles");
+
+                    b.HasIndex("RoleId")
+                        .HasDatabaseName("ix_aspnetuserroles_roleid");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<long>", b =>
+                {
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("userid");
+
+                    b.Property<string>("LoginProvider")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("loginprovider");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Value")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("value");
+
+                    b.HasKey("UserId", "LoginProvider", "Name")
+                        .HasName("pk_aspnetusertokens");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("WMS_backend.Models.DBModels.AppUser", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("accessfailedcount");
+
+                    b.Property<long?>("CompanyId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("companyid");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("concurrencystamp");
+
+                    b.Property<DateTime>("CreatedDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("createddatetime");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("email");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("emailconfirmed");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("firstname");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("isarchived");
+
+                    b.Property<DateTime?>("LastLoginDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("lastlogindatetime");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("lastname");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean")
+                        .HasColumnName("lockoutenabled");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("lockoutend");
+
+                    b.Property<DateTime>("ModifiedDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("modifieddatetime");
+
+                    b.Property<long?>("ModifiedUserId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("modifieduserid");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("normalizedemail");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("normalizedusername");
+
+                    b.Property<string>("PasswordHash")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("passwordhash");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("phonenumber");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("phonenumberconfirmed");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("securitystamp");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean")
+                        .HasColumnName("twofactorenabled");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("username");
+
+                    b.HasKey("Id")
+                        .HasName("pk_aspnetusers");
+
+                    b.HasIndex("CompanyId")
+                        .HasDatabaseName("ix_aspnetusers_companyid");
+
+                    b.HasIndex("ModifiedUserId")
+                        .HasDatabaseName("ix_aspnetusers_modifieduserid");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("WMS_backend.Models.DBModels.AppUserRole", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("concurrencystamp");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("normalizedname");
+
+                    b.HasKey("Id")
+                        .HasName("pk_aspnetroles");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles", (string)null);
+                });
+
             modelBuilder.Entity("WMS_backend.Models.DBModels.Company", b =>
                 {
-                    b.Property<Guid>("CompanyId")
+                    b.Property<long>("CompanyId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("companyid")
-                        .HasDefaultValueSql("uuid_generate_v4()");
+                        .HasColumnType("bigint")
+                        .HasColumnName("companyid");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("CompanyId"));
 
                     b.Property<string>("Address")
                         .HasMaxLength(255)
@@ -82,8 +387,8 @@ namespace WMS_backend.Migrations
                         .HasColumnName("companypermissionid")
                         .HasDefaultValueSql("uuid_generate_v4()");
 
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("CompanyId")
+                        .HasColumnType("bigint")
                         .HasColumnName("companyid");
 
                     b.Property<int>("PermissionType")
@@ -131,8 +436,8 @@ namespace WMS_backend.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("rackid");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("userid");
 
                     b.Property<int>("XSlot")
@@ -171,8 +476,8 @@ namespace WMS_backend.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("address");
 
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("CompanyId")
+                        .HasColumnType("bigint")
                         .HasColumnName("companyid");
 
                     b.Property<bool>("IsArchived")
@@ -211,6 +516,10 @@ namespace WMS_backend.Migrations
                         .HasColumnName("notificationid")
                         .HasDefaultValueSql("uuid_generate_v4()");
 
+                    b.Property<DateTime>("CreatedDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("createddatetime");
+
                     b.Property<string>("Description")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
@@ -230,8 +539,8 @@ namespace WMS_backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("notificationtype");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("userid");
 
                     b.HasKey("NotificationId")
@@ -525,8 +834,8 @@ namespace WMS_backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("unitorders");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("userid");
 
                     b.HasKey("PurchaseOrderId")
@@ -611,8 +920,8 @@ namespace WMS_backend.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("teamid");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("userid");
 
                     b.HasKey("PurchaseRequestId")
@@ -683,6 +992,10 @@ namespace WMS_backend.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("address");
 
+                    b.Property<long>("CompanyId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("companyid");
+
                     b.Property<string>("Contact")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
@@ -708,15 +1021,11 @@ namespace WMS_backend.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("phone");
 
-                    b.Property<Guid>("TeamId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("teamid");
-
                     b.HasKey("SupplierId")
                         .HasName("pk_supplier");
 
-                    b.HasIndex("TeamId")
-                        .HasDatabaseName("ix_supplier_teamid");
+                    b.HasIndex("CompanyId")
+                        .HasDatabaseName("ix_supplier_companyid");
 
                     b.ToTable("supplier", (string)null);
                 });
@@ -729,8 +1038,8 @@ namespace WMS_backend.Migrations
                         .HasColumnName("teamid")
                         .HasDefaultValueSql("uuid_generate_v4()");
 
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("CompanyId")
+                        .HasColumnType("bigint")
                         .HasColumnName("companyid");
 
                     b.Property<bool>("IsArchived")
@@ -752,34 +1061,6 @@ namespace WMS_backend.Migrations
                     b.ToTable("team", (string)null);
                 });
 
-            modelBuilder.Entity("WMS_backend.Models.DBModels.TeamLocation", b =>
-                {
-                    b.Property<Guid>("TeamLocationId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("teamlocationid")
-                        .HasDefaultValueSql("uuid_generate_v4()");
-
-                    b.Property<Guid>("LocationId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("locationid");
-
-                    b.Property<Guid>("TeamId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("teamid");
-
-                    b.HasKey("TeamLocationId")
-                        .HasName("pk_teamlocation");
-
-                    b.HasIndex("LocationId")
-                        .HasDatabaseName("ix_teamlocation_locationid");
-
-                    b.HasIndex("TeamId")
-                        .HasDatabaseName("ix_teamlocation_teamid");
-
-                    b.ToTable("teamlocation", (string)null);
-                });
-
             modelBuilder.Entity("WMS_backend.Models.DBModels.TeamUser", b =>
                 {
                     b.Property<Guid>("TeamUserId")
@@ -792,8 +1073,8 @@ namespace WMS_backend.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("teamid");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("userid");
 
                     b.HasKey("TeamUserId")
@@ -808,93 +1089,43 @@ namespace WMS_backend.Migrations
                     b.ToTable("teamuser", (string)null);
                 });
 
-            modelBuilder.Entity("WMS_backend.Models.DBModels.User", b =>
+            modelBuilder.Entity("WMS_backend.Models.DBModels.Tote", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("ToteId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("userid")
+                        .HasColumnName("toteid")
                         .HasDefaultValueSql("uuid_generate_v4()");
 
-                    b.Property<Guid?>("CompanyId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("companyid");
-
-                    b.Property<DateTime>("CreatedDateTime")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("createddatetime");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("email");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("firstname");
+                    b.Property<int>("CountMax")
+                        .HasColumnType("integer")
+                        .HasColumnName("countmax");
 
                     b.Property<bool>("IsArchived")
                         .HasColumnType("boolean")
                         .HasColumnName("isarchived");
 
-                    b.Property<DateTime?>("LastLoginDateTime")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("lastlogindatetime");
+                    b.Property<Guid>("LoactionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("loactionid");
 
-                    b.Property<string>("LastName")
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("locationid");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
-                        .HasColumnName("lastname");
+                        .HasColumnName("name");
 
-                    b.Property<DateTime>("ModifiedDateTime")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("modifieddatetime");
+                    b.HasKey("ToteId")
+                        .HasName("pk_tote");
 
-                    b.Property<Guid?>("ModifiedUserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("modifieduserid");
+                    b.HasIndex("LocationId")
+                        .HasDatabaseName("ix_tote_locationid");
 
-                    b.Property<byte[]>("PasswordHash")
-                        .HasColumnType("bytea")
-                        .HasColumnName("passwordhash");
-
-                    b.Property<byte[]>("PasswordSalt")
-                        .HasColumnType("bytea")
-                        .HasColumnName("passwordsalt");
-
-                    b.Property<string>("Phone")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("phone");
-
-                    b.HasKey("UserId")
-                        .HasName("pk_user");
-
-                    b.HasIndex("CompanyId")
-                        .HasDatabaseName("ix_user_companyid");
-
-                    b.HasIndex("ModifiedUserId")
-                        .HasDatabaseName("ix_user_modifieduserid");
-
-                    b.ToTable("user", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = new Guid("ca307be4-4455-4141-a0aa-923e8e93080d"),
-                            CreatedDateTime = new DateTime(2024, 6, 24, 3, 9, 28, 340, DateTimeKind.Utc).AddTicks(4585),
-                            Email = "damon6291@gmail.com",
-                            FirstName = "Damon",
-                            IsArchived = false,
-                            LastName = "Joung",
-                            ModifiedDateTime = new DateTime(2024, 6, 24, 3, 9, 28, 340, DateTimeKind.Utc).AddTicks(4587),
-                            PasswordHash = new byte[] { 74, 57, 85, 90, 105, 90, 49, 68, 72, 66, 121, 79, 53, 83, 86, 68, 121, 53, 108, 118, 97, 85, 106, 70, 90, 118, 105, 115, 111, 52, 69, 48, 90, 48, 113, 87, 49, 78, 73, 109, 70, 76, 57, 90, 77, 55, 104, 111, 104, 68, 53, 83, 76, 48, 122, 81, 119, 78, 120, 43, 53, 49, 106, 101, 84, 109, 81, 80, 50, 75, 43, 89, 118, 65, 70, 72, 81, 106, 67, 113, 69, 65, 115, 117, 66, 81, 61, 61 },
-                            PasswordSalt = new byte[] { 116, 57, 80, 73, 108, 57, 108, 55, 50, 103, 48, 89, 111, 71, 47, 48, 103, 71, 51, 102, 99, 87, 82, 116, 49, 107, 72, 115, 48, 110, 87, 74, 66, 119, 97, 54, 56, 113, 50, 122, 68, 53, 122, 54, 114, 72, 52, 78, 76, 102, 76, 76, 121, 122, 67, 84, 108, 79, 81, 69, 77, 56, 78, 106, 43, 114, 77, 122, 50, 110, 70, 53, 97, 74, 109, 90, 109, 87, 120, 53, 113, 69, 122, 48, 72, 98, 118, 122, 112, 105, 72, 78, 81, 47, 108, 71, 74, 111, 50, 52, 90, 89, 89, 99, 50, 109, 70, 100, 115, 80, 103, 66, 106, 89, 120, 118, 90, 75, 48, 112, 68, 65, 84, 73, 69, 109, 114, 78, 110, 89, 117, 107, 109, 104, 73, 106, 113, 57, 52, 98, 100, 115, 67, 43, 114, 101, 119, 117, 65, 55, 85, 49, 102, 118, 88, 83, 98, 107, 103, 55, 69, 84, 119, 102, 83, 103, 122, 116, 97, 68, 77, 61 }
-                        });
+                    b.ToTable("tote", (string)null);
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.UserPermission", b =>
@@ -913,8 +1144,8 @@ namespace WMS_backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("permissiontype");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("userid");
 
                     b.HasKey("UserPermissionId")
@@ -938,8 +1169,8 @@ namespace WMS_backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("preferencetype");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("userid");
 
                     b.Property<string>("Value")
@@ -955,6 +1186,80 @@ namespace WMS_backend.Migrations
                         .HasDatabaseName("ix_userpreference_userid");
 
                     b.ToTable("userpreference", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
+                {
+                    b.HasOne("WMS_backend.Models.DBModels.AppUserRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_aspnetroleclaims_aspnetroles_roleid");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
+                {
+                    b.HasOne("WMS_backend.Models.DBModels.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_aspnetuserclaims_aspnetusers_userid");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<long>", b =>
+                {
+                    b.HasOne("WMS_backend.Models.DBModels.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_aspnetuserlogins_aspnetusers_userid");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<long>", b =>
+                {
+                    b.HasOne("WMS_backend.Models.DBModels.AppUserRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_aspnetuserroles_aspnetroles_roleid");
+
+                    b.HasOne("WMS_backend.Models.DBModels.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_aspnetuserroles_aspnetusers_userid");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<long>", b =>
+                {
+                    b.HasOne("WMS_backend.Models.DBModels.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_aspnetusertokens_aspnetusers_userid");
+                });
+
+            modelBuilder.Entity("WMS_backend.Models.DBModels.AppUser", b =>
+                {
+                    b.HasOne("WMS_backend.Models.DBModels.Company", "Company")
+                        .WithMany("Users")
+                        .HasForeignKey("CompanyId")
+                        .HasConstraintName("fk_aspnetusers_company_companyid");
+
+                    b.HasOne("WMS_backend.Models.DBModels.AppUser", "ModifiedUser")
+                        .WithMany()
+                        .HasForeignKey("ModifiedUserId")
+                        .HasConstraintName("fk_aspnetusers_aspnetusers_modifieduserid");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("ModifiedUser");
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.CompanyPermission", b =>
@@ -985,12 +1290,12 @@ namespace WMS_backend.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_inventory_rack_rackid");
 
-                    b.HasOne("WMS_backend.Models.DBModels.User", "User")
+                    b.HasOne("WMS_backend.Models.DBModels.AppUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_inventory_user_userid");
+                        .HasConstraintName("fk_inventory_users_userid");
 
                     b.Navigation("Product");
 
@@ -1013,12 +1318,12 @@ namespace WMS_backend.Migrations
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.Notification", b =>
                 {
-                    b.HasOne("WMS_backend.Models.DBModels.User", "User")
+                    b.HasOne("WMS_backend.Models.DBModels.AppUser", "User")
                         .WithMany("Notifications")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_notification_user_userid");
+                        .HasConstraintName("fk_notification_users_userid");
 
                     b.Navigation("User");
                 });
@@ -1049,12 +1354,12 @@ namespace WMS_backend.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_purchaseorder_supplier_supplierid");
 
-                    b.HasOne("WMS_backend.Models.DBModels.User", "User")
+                    b.HasOne("WMS_backend.Models.DBModels.AppUser", "User")
                         .WithMany("PurchaseOrders")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_purchaseorder_user_userid");
+                        .HasConstraintName("fk_purchaseorder_users_userid");
 
                     b.Navigation("Location");
 
@@ -1093,12 +1398,12 @@ namespace WMS_backend.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_purchaserequest_team_teamid");
 
-                    b.HasOne("WMS_backend.Models.DBModels.User", "User")
+                    b.HasOne("WMS_backend.Models.DBModels.AppUser", "User")
                         .WithMany("PurchaseRequests")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_purchaserequest_user_userid");
+                        .HasConstraintName("fk_purchaserequest_users_userid");
 
                     b.Navigation("Team");
 
@@ -1108,7 +1413,7 @@ namespace WMS_backend.Migrations
             modelBuilder.Entity("WMS_backend.Models.DBModels.Rack", b =>
                 {
                     b.HasOne("WMS_backend.Models.DBModels.Location", "Location")
-                        .WithMany()
+                        .WithMany("Racks")
                         .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -1119,14 +1424,14 @@ namespace WMS_backend.Migrations
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.Supplier", b =>
                 {
-                    b.HasOne("WMS_backend.Models.DBModels.Team", "Team")
+                    b.HasOne("WMS_backend.Models.DBModels.Company", "Company")
                         .WithMany("Suppliers")
-                        .HasForeignKey("TeamId")
+                        .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_supplier_team_teamid");
+                        .HasConstraintName("fk_supplier_company_companyid");
 
-                    b.Navigation("Team");
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.Team", b =>
@@ -1141,27 +1446,6 @@ namespace WMS_backend.Migrations
                     b.Navigation("Company");
                 });
 
-            modelBuilder.Entity("WMS_backend.Models.DBModels.TeamLocation", b =>
-                {
-                    b.HasOne("WMS_backend.Models.DBModels.Location", "Location")
-                        .WithMany("TeamLocations")
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_teamlocation_location_locationid");
-
-                    b.HasOne("WMS_backend.Models.DBModels.Team", "Team")
-                        .WithMany("TeamLocations")
-                        .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_teamlocation_team_teamid");
-
-                    b.Navigation("Location");
-
-                    b.Navigation("Team");
-                });
-
             modelBuilder.Entity("WMS_backend.Models.DBModels.TeamUser", b =>
                 {
                     b.HasOne("WMS_backend.Models.DBModels.Team", "Team")
@@ -1171,57 +1455,67 @@ namespace WMS_backend.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_teamuser_team_teamid");
 
-                    b.HasOne("WMS_backend.Models.DBModels.User", "User")
+                    b.HasOne("WMS_backend.Models.DBModels.AppUser", "User")
                         .WithMany("TeamUsers")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_teamuser_user_userid");
+                        .HasConstraintName("fk_teamuser_users_userid");
 
                     b.Navigation("Team");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WMS_backend.Models.DBModels.User", b =>
+            modelBuilder.Entity("WMS_backend.Models.DBModels.Tote", b =>
                 {
-                    b.HasOne("WMS_backend.Models.DBModels.Company", "Company")
-                        .WithMany("Users")
-                        .HasForeignKey("CompanyId")
-                        .HasConstraintName("fk_user_company_companyid");
+                    b.HasOne("WMS_backend.Models.DBModels.Location", "Location")
+                        .WithMany("Totes")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_tote_location_locationid");
 
-                    b.HasOne("WMS_backend.Models.DBModels.User", "ModifiedUser")
-                        .WithMany()
-                        .HasForeignKey("ModifiedUserId")
-                        .HasConstraintName("fk_user_user_modifieduserid");
-
-                    b.Navigation("Company");
-
-                    b.Navigation("ModifiedUser");
+                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.UserPermission", b =>
                 {
-                    b.HasOne("WMS_backend.Models.DBModels.User", "User")
+                    b.HasOne("WMS_backend.Models.DBModels.AppUser", "User")
                         .WithMany("UserPermissions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_userpermission_user_userid");
+                        .HasConstraintName("fk_userpermission_users_userid");
 
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.UserPreference", b =>
                 {
-                    b.HasOne("WMS_backend.Models.DBModels.User", "User")
+                    b.HasOne("WMS_backend.Models.DBModels.AppUser", "User")
                         .WithMany("UserPreferences")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_userpreference_user_userid");
+                        .HasConstraintName("fk_userpreference_users_userid");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WMS_backend.Models.DBModels.AppUser", b =>
+                {
+                    b.Navigation("Notifications");
+
+                    b.Navigation("PurchaseOrders");
+
+                    b.Navigation("PurchaseRequests");
+
+                    b.Navigation("TeamUsers");
+
+                    b.Navigation("UserPermissions");
+
+                    b.Navigation("UserPreferences");
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.Company", b =>
@@ -1229,6 +1523,8 @@ namespace WMS_backend.Migrations
                     b.Navigation("CompanyPermissions");
 
                     b.Navigation("Locations");
+
+                    b.Navigation("Suppliers");
 
                     b.Navigation("Teams");
 
@@ -1239,7 +1535,9 @@ namespace WMS_backend.Migrations
                 {
                     b.Navigation("PurchaseOrders");
 
-                    b.Navigation("TeamLocations");
+                    b.Navigation("Racks");
+
+                    b.Navigation("Totes");
                 });
 
             modelBuilder.Entity("WMS_backend.Models.DBModels.Product", b =>
@@ -1270,26 +1568,7 @@ namespace WMS_backend.Migrations
                 {
                     b.Navigation("PurchaseRequests");
 
-                    b.Navigation("Suppliers");
-
-                    b.Navigation("TeamLocations");
-
                     b.Navigation("TeamUsers");
-                });
-
-            modelBuilder.Entity("WMS_backend.Models.DBModels.User", b =>
-                {
-                    b.Navigation("Notifications");
-
-                    b.Navigation("PurchaseOrders");
-
-                    b.Navigation("PurchaseRequests");
-
-                    b.Navigation("TeamUsers");
-
-                    b.Navigation("UserPermissions");
-
-                    b.Navigation("UserPreferences");
                 });
 #pragma warning restore 612, 618
         }

@@ -29,10 +29,10 @@ namespace WMS_backend.Controllers
         public async Task<IActionResult> GetUserPermission()
         {
             var ret = new ReturnModel();
-            var userId = userService.GetUserId();
-            if (userId == null) return Ok(ret.Logout());
+            var user = await userService.GetUser();
+            if (user == null) return Ok(ret.Logout());
 
-            var (res, obj) = await permissionManager.GetUserPermission((Guid)userId);
+            var (res, obj) = await permissionManager.GetUserPermission(user.Id);
 
             if (!res) return Ok(ret.Fail(obj.ToString()));
 
@@ -44,12 +44,12 @@ namespace WMS_backend.Controllers
         public async Task<IActionResult> GetCompanyPermission()
         {
             var ret = new ReturnModel();
-            var userId = userService.GetUserId();
-            if (userId == null) return Ok(ret.Logout());
-            var permissionError = await authManager.CheckPermission((Guid)userId, new EnumPermissionType[] { EnumPermissionType.ManageTeam, EnumPermissionType.ManageCompany }, false);
+            var user = await userService.GetUser();
+            if (user == null) return Ok(ret.Logout());
+            var permissionError = await authManager.CheckPermission(user.Id, new EnumPermissionType[] { EnumPermissionType.ManageTeam, EnumPermissionType.ManageCompany }, false);
             if (permissionError != null) return Ok(ret.Fail(permissionError));
 
-            var (res, obj) = await permissionManager.GetCompanyPermission((Guid)userId);
+            var (res, obj) = await permissionManager.GetCompanyPermission(user.Id);
 
             if (!res) return Ok(ret.Fail(obj.ToString()));
 
@@ -57,12 +57,12 @@ namespace WMS_backend.Controllers
         }
 
         [HttpPut("upsert/{updateUserId}")]
-        public async Task<IActionResult> UpsertUserPermission(Guid updateUserId, List<UserPermissionDTO> permissions)
+        public async Task<IActionResult> UpsertUserPermission(long updateUserId, List<UserPermissionDTO> permissions)
         {
             var ret = new ReturnModel();
-            var userId = userService.GetUserId();
-            if (userId == null) return Ok(ret.Logout());
-            var permissionError = await authManager.CheckPermission((Guid)userId, new EnumPermissionType[] { EnumPermissionType.ManageTeam, EnumPermissionType.ManageCompany }, false);
+            var user = await userService.GetUser();
+            if (user == null) return Ok(ret.Logout());
+            var permissionError = await authManager.CheckPermission(user.Id, new EnumPermissionType[] { EnumPermissionType.ManageTeam, EnumPermissionType.ManageCompany }, false);
             if (permissionError != null) return Ok(ret.Fail(permissionError));
 
             var (res, obj) = await permissionManager.UpsertUserPermission(updateUserId, permissions);
@@ -76,9 +76,9 @@ namespace WMS_backend.Controllers
         public async Task<IActionResult> DeleteUserPermission(Guid userPermissionId)
         {
             var ret = new ReturnModel();
-            var userId = userService.GetUserId();
-            if (userId == null) return Ok(ret.Logout());
-            var permissionError = await authManager.CheckPermission((Guid)userId, new EnumPermissionType[] { EnumPermissionType.ManageTeam, EnumPermissionType.ManageCompany }, false);
+            var user = await userService.GetUser();
+            if (user == null) return Ok(ret.Logout());
+            var permissionError = await authManager.CheckPermission(user.Id, new EnumPermissionType[] { EnumPermissionType.ManageTeam, EnumPermissionType.ManageCompany }, false);
             if (permissionError != null) return Ok(ret.Fail(permissionError));
 
             var (res, obj) = await permissionManager.DeleteUserPermission(userPermissionId);

@@ -13,12 +13,12 @@ namespace WMS_backend.Models.DBModels
         public int Quantity { get; set; }
         public DateTime? ExpirationDate { get; set; }
 
-        public Guid UserId { get; set; }
+        public long UserId { get; set; }
         public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
         public DateTime ModifiedDateTime { get; set; } = DateTime.UtcNow;
 
         public virtual Product Product { get; set; }
         public virtual Rack Rack { get; set; }
-        public virtual User User { get; set; }
+        public virtual AppUser User { get; set; }
     }
 }

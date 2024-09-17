@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -17,10 +18,26 @@ namespace WMS_backend.Migrations
                 .Annotation("Npgsql:PostgresExtension:uuid-ossp", ",,");
 
             migrationBuilder.CreateTable(
+                name: "AspNetRoles",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    normalizedname = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    concurrencystamp = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_aspnetroles", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "company",
                 columns: table => new
                 {
-                    companyid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
+                    companyid = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     address = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     contact = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
@@ -47,11 +64,76 @@ namespace WMS_backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AspNetRoleClaims",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    roleid = table.Column<long>(type: "bigint", nullable: false),
+                    claimtype = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    claimvalue = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_aspnetroleclaims", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_aspnetroleclaims_aspnetroles_roleid",
+                        column: x => x.roleid,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    isarchived = table.Column<bool>(type: "boolean", nullable: false),
+                    firstname = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    lastname = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    lastlogindatetime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    createddatetime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    modifieddatetime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    modifieduserid = table.Column<long>(type: "bigint", nullable: true),
+                    companyid = table.Column<long>(type: "bigint", nullable: true),
+                    username = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    normalizedusername = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    normalizedemail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    emailconfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    passwordhash = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    securitystamp = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    concurrencystamp = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    phonenumber = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    phonenumberconfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    twofactorenabled = table.Column<bool>(type: "boolean", nullable: false),
+                    lockoutend = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    lockoutenabled = table.Column<bool>(type: "boolean", nullable: false),
+                    accessfailedcount = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_aspnetusers", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_aspnetusers_aspnetusers_modifieduserid",
+                        column: x => x.modifieduserid,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "fk_aspnetusers_company_companyid",
+                        column: x => x.companyid,
+                        principalTable: "company",
+                        principalColumn: "companyid");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "companypermission",
                 columns: table => new
                 {
                     companypermissionid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
-                    companyid = table.Column<Guid>(type: "uuid", nullable: false),
+                    companyid = table.Column<long>(type: "bigint", nullable: false),
                     permissiontype = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -75,7 +157,7 @@ namespace WMS_backend.Migrations
                     phone = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     locationtype = table.Column<int>(type: "integer", nullable: false),
                     isarchived = table.Column<bool>(type: "boolean", nullable: false),
-                    companyid = table.Column<Guid>(type: "uuid", nullable: false)
+                    companyid = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -89,13 +171,37 @@ namespace WMS_backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "supplier",
+                columns: table => new
+                {
+                    supplierid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
+                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    address = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    contact = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    phone = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    isarchived = table.Column<bool>(type: "boolean", nullable: false),
+                    companyid = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_supplier", x => x.supplierid);
+                    table.ForeignKey(
+                        name: "fk_supplier_company_companyid",
+                        column: x => x.companyid,
+                        principalTable: "company",
+                        principalColumn: "companyid",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "team",
                 columns: table => new
                 {
                     teamid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
                     name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     isarchived = table.Column<bool>(type: "boolean", nullable: false),
-                    companyid = table.Column<Guid>(type: "uuid", nullable: false)
+                    companyid = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -109,37 +215,151 @@ namespace WMS_backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "user",
+                name: "AspNetUserClaims",
                 columns: table => new
                 {
-                    userid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
-                    email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    passwordhash = table.Column<byte[]>(type: "bytea", nullable: true),
-                    passwordsalt = table.Column<byte[]>(type: "bytea", nullable: true),
-                    isarchived = table.Column<bool>(type: "boolean", nullable: false),
-                    firstname = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    lastname = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    phone = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    lastlogindatetime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    createddatetime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    modifieddatetime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    modifieduserid = table.Column<Guid>(type: "uuid", nullable: true),
-                    companyid = table.Column<Guid>(type: "uuid", nullable: false)
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    userid = table.Column<long>(type: "bigint", nullable: false),
+                    claimtype = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    claimvalue = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_user", x => x.userid);
+                    table.PrimaryKey("pk_aspnetuserclaims", x => x.id);
                     table.ForeignKey(
-                        name: "fk_user_company_companyid",
-                        column: x => x.companyid,
-                        principalTable: "company",
-                        principalColumn: "companyid",
+                        name: "fk_aspnetuserclaims_aspnetusers_userid",
+                        column: x => x.userid,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserLogins",
+                columns: table => new
+                {
+                    loginprovider = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    providerkey = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    providerdisplayname = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    userid = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_aspnetuserlogins", x => new { x.loginprovider, x.providerkey });
+                    table.ForeignKey(
+                        name: "fk_aspnetuserlogins_aspnetusers_userid",
+                        column: x => x.userid,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserRoles",
+                columns: table => new
+                {
+                    userid = table.Column<long>(type: "bigint", nullable: false),
+                    roleid = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_aspnetuserroles", x => new { x.userid, x.roleid });
+                    table.ForeignKey(
+                        name: "fk_aspnetuserroles_aspnetroles_roleid",
+                        column: x => x.roleid,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_user_user_modifieduserid",
-                        column: x => x.modifieduserid,
-                        principalTable: "user",
-                        principalColumn: "userid");
+                        name: "fk_aspnetuserroles_aspnetusers_userid",
+                        column: x => x.userid,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserTokens",
+                columns: table => new
+                {
+                    userid = table.Column<long>(type: "bigint", nullable: false),
+                    loginprovider = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    value = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_aspnetusertokens", x => new { x.userid, x.loginprovider, x.name });
+                    table.ForeignKey(
+                        name: "fk_aspnetusertokens_aspnetusers_userid",
+                        column: x => x.userid,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "notification",
+                columns: table => new
+                {
+                    notificationid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
+                    notificationtype = table.Column<int>(type: "integer", nullable: false),
+                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    isarchived = table.Column<bool>(type: "boolean", nullable: false),
+                    createddatetime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    userid = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_notification", x => x.notificationid);
+                    table.ForeignKey(
+                        name: "fk_notification_users_userid",
+                        column: x => x.userid,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "userpermission",
+                columns: table => new
+                {
+                    userpermissionid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
+                    userid = table.Column<long>(type: "bigint", nullable: false),
+                    permissiontype = table.Column<int>(type: "integer", nullable: false),
+                    iscrud = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_userpermission", x => x.userpermissionid);
+                    table.ForeignKey(
+                        name: "fk_userpermission_users_userid",
+                        column: x => x.userid,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "userpreference",
+                columns: table => new
+                {
+                    userpreferenceid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
+                    userid = table.Column<long>(type: "bigint", nullable: false),
+                    preferencetype = table.Column<int>(type: "integer", nullable: false),
+                    value = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_userpreference", x => x.userpreferenceid);
+                    table.ForeignKey(
+                        name: "fk_userpreference_users_userid",
+                        column: x => x.userid,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -166,168 +386,24 @@ namespace WMS_backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "supplier",
+                name: "tote",
                 columns: table => new
                 {
-                    supplierid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
+                    toteid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
                     name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    address = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    contact = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    phone = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    countmax = table.Column<int>(type: "integer", nullable: false),
                     isarchived = table.Column<bool>(type: "boolean", nullable: false),
-                    teamid = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_supplier", x => x.supplierid);
-                    table.ForeignKey(
-                        name: "fk_supplier_team_teamid",
-                        column: x => x.teamid,
-                        principalTable: "team",
-                        principalColumn: "teamid",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "teamlocation",
-                columns: table => new
-                {
-                    teamlocationid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
-                    teamid = table.Column<Guid>(type: "uuid", nullable: false),
+                    loactionid = table.Column<Guid>(type: "uuid", nullable: false),
                     locationid = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_teamlocation", x => x.teamlocationid);
+                    table.PrimaryKey("pk_tote", x => x.toteid);
                     table.ForeignKey(
-                        name: "fk_teamlocation_location_locationid",
+                        name: "fk_tote_location_locationid",
                         column: x => x.locationid,
                         principalTable: "location",
                         principalColumn: "locationid",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_teamlocation_team_teamid",
-                        column: x => x.teamid,
-                        principalTable: "team",
-                        principalColumn: "teamid",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "notification",
-                columns: table => new
-                {
-                    notificationid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
-                    notificationtype = table.Column<int>(type: "integer", nullable: false),
-                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    isarchived = table.Column<bool>(type: "boolean", nullable: false),
-                    userid = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_notification", x => x.notificationid);
-                    table.ForeignKey(
-                        name: "fk_notification_user_userid",
-                        column: x => x.userid,
-                        principalTable: "user",
-                        principalColumn: "userid",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "purchaserequest",
-                columns: table => new
-                {
-                    purchaserequestid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
-                    userid = table.Column<Guid>(type: "uuid", nullable: false),
-                    teamid = table.Column<Guid>(type: "uuid", nullable: false),
-                    messagetoteam = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
-                    isarchived = table.Column<bool>(type: "boolean", nullable: false),
-                    staus = table.Column<int>(type: "integer", nullable: false),
-                    messagefromteam = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
-                    createddatetime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_purchaserequest", x => x.purchaserequestid);
-                    table.ForeignKey(
-                        name: "fk_purchaserequest_team_teamid",
-                        column: x => x.teamid,
-                        principalTable: "team",
-                        principalColumn: "teamid",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_purchaserequest_user_userid",
-                        column: x => x.userid,
-                        principalTable: "user",
-                        principalColumn: "userid",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "teamuser",
-                columns: table => new
-                {
-                    teamuserid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
-                    userid = table.Column<Guid>(type: "uuid", nullable: false),
-                    teamid = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_teamuser", x => x.teamuserid);
-                    table.ForeignKey(
-                        name: "fk_teamuser_team_teamid",
-                        column: x => x.teamid,
-                        principalTable: "team",
-                        principalColumn: "teamid",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_teamuser_user_userid",
-                        column: x => x.userid,
-                        principalTable: "user",
-                        principalColumn: "userid",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "userpermission",
-                columns: table => new
-                {
-                    userpermissionid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
-                    userid = table.Column<Guid>(type: "uuid", nullable: false),
-                    permissiontype = table.Column<int>(type: "integer", nullable: false),
-                    iscrud = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_userpermission", x => x.userpermissionid);
-                    table.ForeignKey(
-                        name: "fk_userpermission_user_userid",
-                        column: x => x.userid,
-                        principalTable: "user",
-                        principalColumn: "userid",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "userpreference",
-                columns: table => new
-                {
-                    userpreferenceid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
-                    userid = table.Column<Guid>(type: "uuid", nullable: false),
-                    preferencetype = table.Column<int>(type: "integer", nullable: false),
-                    value = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_userpreference", x => x.userpreferenceid);
-                    table.ForeignKey(
-                        name: "fk_userpreference_user_userid",
-                        column: x => x.userid,
-                        principalTable: "user",
-                        principalColumn: "userid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -372,7 +448,7 @@ namespace WMS_backend.Migrations
                     postatus = table.Column<int>(type: "integer", nullable: false),
                     locationid = table.Column<Guid>(type: "uuid", nullable: false),
                     supplierid = table.Column<Guid>(type: "uuid", nullable: false),
-                    userid = table.Column<Guid>(type: "uuid", nullable: false),
+                    userid = table.Column<long>(type: "bigint", nullable: false),
                     expecteddate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     shippingcarrier = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     trackingnumber = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
@@ -402,10 +478,65 @@ namespace WMS_backend.Migrations
                         principalColumn: "supplierid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_purchaseorder_user_userid",
+                        name: "fk_purchaseorder_users_userid",
                         column: x => x.userid,
-                        principalTable: "user",
-                        principalColumn: "userid",
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "purchaserequest",
+                columns: table => new
+                {
+                    purchaserequestid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
+                    userid = table.Column<long>(type: "bigint", nullable: false),
+                    teamid = table.Column<Guid>(type: "uuid", nullable: false),
+                    messagetoteam = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
+                    isarchived = table.Column<bool>(type: "boolean", nullable: false),
+                    staus = table.Column<int>(type: "integer", nullable: false),
+                    messagefromteam = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
+                    createddatetime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_purchaserequest", x => x.purchaserequestid);
+                    table.ForeignKey(
+                        name: "fk_purchaserequest_team_teamid",
+                        column: x => x.teamid,
+                        principalTable: "team",
+                        principalColumn: "teamid",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_purchaserequest_users_userid",
+                        column: x => x.userid,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "teamuser",
+                columns: table => new
+                {
+                    teamuserid = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
+                    userid = table.Column<long>(type: "bigint", nullable: false),
+                    teamid = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_teamuser", x => x.teamuserid);
+                    table.ForeignKey(
+                        name: "fk_teamuser_team_teamid",
+                        column: x => x.teamid,
+                        principalTable: "team",
+                        principalColumn: "teamid",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_teamuser_users_userid",
+                        column: x => x.userid,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -420,7 +551,7 @@ namespace WMS_backend.Migrations
                     yslot = table.Column<int>(type: "integer", nullable: false),
                     quantity = table.Column<int>(type: "integer", nullable: false),
                     expirationdate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    userid = table.Column<Guid>(type: "uuid", nullable: false),
+                    userid = table.Column<long>(type: "bigint", nullable: false),
                     createddatetime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     modifieddatetime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -440,10 +571,10 @@ namespace WMS_backend.Migrations
                         principalColumn: "rackid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_inventory_user_userid",
+                        name: "fk_inventory_users_userid",
                         column: x => x.userid,
-                        principalTable: "user",
-                        principalColumn: "userid",
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -498,6 +629,53 @@ namespace WMS_backend.Migrations
                     { 170, "ManageCompany" },
                     { 180, "ManageTeam" }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_aspnetroleclaims_roleid",
+                table: "AspNetRoleClaims",
+                column: "roleid");
+
+            migrationBuilder.CreateIndex(
+                name: "RoleNameIndex",
+                table: "AspNetRoles",
+                column: "normalizedname",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_aspnetuserclaims_userid",
+                table: "AspNetUserClaims",
+                column: "userid");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_aspnetuserlogins_userid",
+                table: "AspNetUserLogins",
+                column: "userid");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_aspnetuserroles_roleid",
+                table: "AspNetUserRoles",
+                column: "roleid");
+
+            migrationBuilder.CreateIndex(
+                name: "EmailIndex",
+                table: "AspNetUsers",
+                column: "normalizedemail");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_aspnetusers_companyid",
+                table: "AspNetUsers",
+                column: "companyid");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_aspnetusers_modifieduserid",
+                table: "AspNetUsers",
+                column: "modifieduserid");
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                table: "AspNetUsers",
+                column: "normalizedusername",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_companypermission_companyid",
@@ -575,24 +753,14 @@ namespace WMS_backend.Migrations
                 column: "locationid");
 
             migrationBuilder.CreateIndex(
-                name: "ix_supplier_teamid",
+                name: "ix_supplier_companyid",
                 table: "supplier",
-                column: "teamid");
+                column: "companyid");
 
             migrationBuilder.CreateIndex(
                 name: "ix_team_companyid",
                 table: "team",
                 column: "companyid");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_teamlocation_locationid",
-                table: "teamlocation",
-                column: "locationid");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_teamlocation_teamid",
-                table: "teamlocation",
-                column: "teamid");
 
             migrationBuilder.CreateIndex(
                 name: "ix_teamuser_teamid",
@@ -605,14 +773,9 @@ namespace WMS_backend.Migrations
                 column: "userid");
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_companyid",
-                table: "user",
-                column: "companyid");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_user_modifieduserid",
-                table: "user",
-                column: "modifieduserid");
+                name: "ix_tote_locationid",
+                table: "tote",
+                column: "locationid");
 
             migrationBuilder.CreateIndex(
                 name: "ix_userpermission_userid",
@@ -628,6 +791,21 @@ namespace WMS_backend.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AspNetRoleClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserLogins");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserRoles");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserTokens");
+
             migrationBuilder.DropTable(
                 name: "companypermission");
 
@@ -647,16 +825,19 @@ namespace WMS_backend.Migrations
                 name: "purchaserequest");
 
             migrationBuilder.DropTable(
-                name: "teamlocation");
+                name: "teamuser");
 
             migrationBuilder.DropTable(
-                name: "teamuser");
+                name: "tote");
 
             migrationBuilder.DropTable(
                 name: "userpermission");
 
             migrationBuilder.DropTable(
                 name: "userpreference");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "rack");
@@ -668,16 +849,16 @@ namespace WMS_backend.Migrations
                 name: "purchaseorder");
 
             migrationBuilder.DropTable(
+                name: "team");
+
+            migrationBuilder.DropTable(
                 name: "location");
 
             migrationBuilder.DropTable(
                 name: "supplier");
 
             migrationBuilder.DropTable(
-                name: "user");
-
-            migrationBuilder.DropTable(
-                name: "team");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "company");

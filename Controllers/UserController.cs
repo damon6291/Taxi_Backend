@@ -27,10 +27,10 @@ namespace WMS_backend.Controllers
         public async Task<IActionResult> GetMe()
         {
             var ret = new ReturnModel();
-            var userId = userService.GetUserId();
-            if (userId == null) return Ok(ret.Logout());
+            var user = await userService.GetUser();
+            if (user == null) return Ok(ret.Logout());
 
-            var (res, msg) = await userManager.GetMe((Guid)userId);
+            var (res, msg) = await userManager.GetMe(user.Id);
 
             if (!res) return Ok(ret.Fail(msg.ToString()));
 
@@ -43,10 +43,10 @@ namespace WMS_backend.Controllers
         public async Task<IActionResult> GetNotification()
         {
             var ret = new ReturnModel();
-            var userId = userService.GetUserId();
-            if (userId == null) return Ok(ret.Logout());
+            var user = await userService.GetUser();
+            if (user == null) return Ok(ret.Logout());
 
-            var (res, msg) = await userManager.GetNotification((Guid)userId);
+            var (res, msg) = await userManager.GetNotification(user.Id);
 
             if (!res) return Ok(ret.Fail(msg.ToString()));
 
@@ -59,17 +59,17 @@ namespace WMS_backend.Controllers
         public async Task<IActionResult> GetUsersList([Required] int pageNumber, [Required] int pageSize, string orderColumn = "", bool isAscending = true, string userName = "")
         {
             var ret = new ReturnModel();
-            var userId = userService.GetUserId();
-            if (userId == null) return Ok(ret.Logout());
+            var user = await userService.GetUser();
+            if (user == null) return Ok(ret.Logout());
 
             Page page = new Page(pageNumber, pageSize, orderColumn, isAscending);
             List<Filter> filters = new List<Filter> { new Filter("Name", Op.Contains, userName)};
             page.Filters = filters;
             var (count, res) = await userManager.GetUsers(page);
             List<UserDTO> dtos = new();
-            foreach (var user in res)
+            foreach (var ruser in res)
             {
-                dtos.Add(UserMapper.UserToDTO(user));
+                dtos.Add(UserMapper.UserToDTO(ruser));
             }
             ret.Success(new { count, users = dtos });
             return Ok(ret);

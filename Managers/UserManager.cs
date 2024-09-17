@@ -18,7 +18,7 @@ namespace WMS_backend.Managers
         }
 
 
-        public async Task<(bool, object)> GetMe(Guid userId)
+        public async Task<(bool, object)> GetMe(long userId)
         {
             try
             {
@@ -35,7 +35,7 @@ namespace WMS_backend.Managers
             }
         }
 
-        public async Task<(bool, object)> GetNotification(Guid userId)
+        public async Task<(bool, object)> GetNotification(long userId)
         {
             try
             {
@@ -52,16 +52,16 @@ namespace WMS_backend.Managers
             }
         }
 
-        public async Task<(int, List<User>)> GetUsers(Page page)
+        public async Task<(int, List<AppUser>)> GetUsers(Page page)
         {
             try
             {
-                var activeUsers = context.User.Where(x => !x.IsArchived);
+                var activeUsers = context.Users.Where(x => !x.IsArchived);
                 return await page.Get(activeUsers);
             }
             catch (Exception ex)
             {
-                return (0, new List<User>());
+                return (0, new List<AppUser>());
             }
         }
 

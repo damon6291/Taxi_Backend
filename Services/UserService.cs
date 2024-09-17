@@ -4,28 +4,33 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json;
 using WMS_backend.Models.Permission;
+using Microsoft.AspNetCore.Identity;
+using WMS_backend.Models.DBModels;
 
 namespace WMS_backend.Services
 {
     public class UserService : IUserService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly UserManager<AppUser> userManager;
         private string secretKey;
 
-        public UserService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+        public UserService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration, UserManager<AppUser> userManager)
         {
             _httpContextAccessor = httpContextAccessor;
+            this.userManager = userManager;
             secretKey = configuration.GetValue<string>("AppSettings:Token")!;
         }
 
-        public Guid? GetUserId()
+        public async Task<AppUser?> GetUser()
         {
             var result = string.Empty;
             if (_httpContextAccessor.HttpContext != null)
             {
-                result = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.UserData);
+                var temp =  await userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                return temp;
             }
-            return result != null ? new Guid(result) : null;
+            return null;
         }
 
         public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)

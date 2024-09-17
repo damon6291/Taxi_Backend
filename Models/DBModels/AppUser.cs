@@ -1,27 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WMS_backend.Models.DBModels
 {
-    public class User
+    public class AppUser : IdentityUser<long>
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid UserId { get; set; } = Guid.NewGuid();
-        public string Email { get; set; } = string.Empty;
-        public byte[]? PasswordHash { get; set; }
-        public byte[]? PasswordSalt { get; set; }
         public bool IsArchived { get; set; } = false;
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Name => FirstName + " " + LastName;
-        public string? Phone { get; set; }
 
         public DateTime? LastLoginDateTime { get; set; }
         public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
         public DateTime ModifiedDateTime { get; set; } = DateTime.UtcNow;
-        public Guid? ModifiedUserId { get; set; }
-        public Guid? CompanyId { get; set; }
+        public long? ModifiedUserId { get; set; }
+        public long? CompanyId { get; set; }
         [ForeignKey("ModifiedUserId")]
-        public virtual User? ModifiedUser { get; set; }
+        public virtual AppUser? ModifiedUser { get; set; }
         public virtual Company? Company { get; set; }
 
         public virtual ICollection<TeamUser> TeamUsers { get; set; } = new HashSet<TeamUser>();

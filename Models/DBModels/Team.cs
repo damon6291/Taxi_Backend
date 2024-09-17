@@ -10,7 +10,7 @@ namespace WMS_backend.Models.DBModels
         public bool IsArchived { get; set; } = false;
 
 
-        public Guid CompanyId { get; set; }
+        public long CompanyId { get; set; }
         public virtual Company Company { get; set; }
 
 

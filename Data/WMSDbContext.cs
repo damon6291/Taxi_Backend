@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
@@ -9,7 +10,7 @@ using WMS_backend.Services;
 
 namespace WMS_backend.Data
 {
-    public class WMSDbContext : DbContext
+    public class WMSDbContext : IdentityDbContext<AppUser, IdentityRole<long>, long>
     {
         private readonly DataGenerator dataGenerator;
 
@@ -32,13 +33,13 @@ namespace WMS_backend.Data
         public virtual DbSet<Team> Team { get; set; }
         public virtual DbSet<TeamUser> TeamUser { get; set; }
         public virtual DbSet<TeamUser> Tote { get; set; }
-        public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserPermission> UserPermission { get; set; }
         public virtual DbSet<UserPreference> UserPreference { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.HasPostgresExtension("uuid-ossp");
             foreach (var p in modelBuilder.Model.GetEntityTypes().SelectMany(t => t.GetProperties())
                 .Where(p => p.ClrType == typeof(string) && p.GetMaxLength() == null))
@@ -121,7 +122,7 @@ namespace WMS_backend.Data
             {
 
             });
-            modelBuilder.Entity<User>(a =>
+            modelBuilder.Entity<AppUser>(a =>
             {
 
             });
@@ -135,7 +136,7 @@ namespace WMS_backend.Data
             });
 
             modelBuilder.Entity<Company>().HasData(dataGenerator.GenerateCompany());
-            modelBuilder.Entity<User>().HasData(dataGenerator.GenerateUser());
+            modelBuilder.Entity<AppUser>().HasData(dataGenerator.GenerateUser());
         }
     }
 
