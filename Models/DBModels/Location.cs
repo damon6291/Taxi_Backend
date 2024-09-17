@@ -3,10 +3,10 @@ using WMS_backend.Models.Enums;
 
 namespace WMS_backend.Models.DBModels
 {
-    public class Location
+    public class Location : Crudable
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid LocationId { get; set; }
+        public long LocationId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Address { get; set; }
         public string? Phone { get; set; }

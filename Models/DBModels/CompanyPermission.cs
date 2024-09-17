@@ -6,7 +6,7 @@ namespace WMS_backend.Models.DBModels
     public class CompanyPermission
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid CompanyPermissionId { get; set; }
+        public long CompanyPermissionId { get; set; }
         public long CompanyId { get; set; }
         public EnumPermissionType PermissionType { get; set; }
         public virtual Company Company { get; set; }

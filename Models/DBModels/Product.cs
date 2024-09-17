@@ -2,7 +2,7 @@
 
 namespace WMS_backend.Models.DBModels
 {
-    public class Product
+    public class Product : Crudable
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid ProductId { get; set; }
@@ -21,7 +21,10 @@ namespace WMS_backend.Models.DBModels
         public float RetailPrice { get; set; }
         public float TaxRate { get; set; }
         public bool IsArchived { get; set; } = false;
-        public Guid? SupplierId { get; set; }
+        public long? SupplierId { get; set; }
+        public long CompanyId { get; set; }
+        public virtual Company Company { get; set; }
+
         public virtual Supplier Supplier { get; set; }
         public virtual ICollection<Inventory> Inventories { get; set; } = new HashSet<Inventory>();
         public virtual ICollection<PurchaseOrderItem> PurchaseOrderItems { get; set; } = new HashSet<PurchaseOrderItem>();

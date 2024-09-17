@@ -60,7 +60,7 @@ namespace WMS_backend.Managers
             return (true, string.Empty);
         }
 
-        public async Task<(bool, object)> DeleteUserPermission(Guid userPermissionId)
+        public async Task<(bool, object)> DeleteUserPermission(long userPermissionId)
         {
             try
             {

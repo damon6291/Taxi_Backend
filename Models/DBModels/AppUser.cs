@@ -11,20 +11,30 @@ namespace WMS_backend.Models.DBModels
         public string Name => FirstName + " " + LastName;
 
         public DateTime? LastLoginDateTime { get; set; }
+        public long? CompanyId { get; set; }
+        public long CreatedUserId { get; set; }
+        public long ModifiedUserId { get; set; }
         public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
         public DateTime ModifiedDateTime { get; set; } = DateTime.UtcNow;
-        public long? ModifiedUserId { get; set; }
-        public long? CompanyId { get; set; }
+
+        [ForeignKey("CreatedUserId")]
+        public virtual AppUser CreatedUser { get; set; }
         [ForeignKey("ModifiedUserId")]
-        public virtual AppUser? ModifiedUser { get; set; }
+        public virtual AppUser ModifiedUser { get; set; }
         public virtual Company? Company { get; set; }
 
-        public virtual ICollection<TeamUser> TeamUsers { get; set; } = new HashSet<TeamUser>();
+        [InverseProperty("User")]
         public virtual ICollection<UserPermission> UserPermissions { get; set; } = new HashSet<UserPermission>();
         public virtual ICollection<UserPreference> UserPreferences { get; set; } = new HashSet<UserPreference>();
         public virtual ICollection<Notification> Notifications { get; set; } = new HashSet<Notification>();
-        public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new HashSet<PurchaseOrder>();
-        public virtual ICollection<PurchaseRequest> PurchaseRequests { get; set; } = new HashSet<PurchaseRequest>();
+        [InverseProperty("CreatedUser")]
+        public virtual ICollection<PurchaseOrder> CreatedPurchaseOrders { get; set; } = new HashSet<PurchaseOrder>();
+        [InverseProperty("ModifiedUser")]
+        public virtual ICollection<PurchaseOrder> ModifiedPurchaseOrders { get; set; } = new HashSet<PurchaseOrder>();
+        [InverseProperty("CreatedUser")]
+        public virtual ICollection<PurchaseRequest> CreatedPurchaseRequests { get; set; } = new HashSet<PurchaseRequest>();
+        [InverseProperty("ModifiedUser")]
+        public virtual ICollection<PurchaseRequest> ModifiedPurchaseRequests { get; set; } = new HashSet<PurchaseRequest>();
 
     }
 }

@@ -73,7 +73,7 @@ namespace WMS_backend.Controllers
         }
 
         [HttpDelete("{userPermissionId}")]
-        public async Task<IActionResult> DeleteUserPermission(Guid userPermissionId)
+        public async Task<IActionResult> DeleteUserPermission(long userPermissionId)
         {
             var ret = new ReturnModel();
             var user = await userService.GetUser();

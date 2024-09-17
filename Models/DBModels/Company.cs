@@ -11,13 +11,12 @@ namespace WMS_backend.Models.DBModels
         public string Name { get; set; } = string.Empty;
         public string? Address { get; set; }
         public string? Contact { get; set; }
-        public string? Phone { get; set; }
+        public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
         public bool IsArchived { get; set; } = false;
         public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
 
         public virtual ICollection<AppUser> Users { get; set; } = new HashSet<AppUser>();
-        public virtual ICollection<Team> Teams { get; set; } = new HashSet<Team>();
         public virtual ICollection<Location> Locations { get; set; } = new HashSet<Location>();
         public virtual ICollection<CompanyPermission> CompanyPermissions { get; set; } = new HashSet<CompanyPermission>();
         public virtual ICollection<Supplier> Suppliers { get; set; } = new HashSet<Supplier>();

@@ -6,7 +6,7 @@ namespace WMS_backend.Models.DBModels
     public class UserPreference
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid UserPreferenceId { get; set; }
+        public long UserPreferenceId { get; set; }
         public long UserId { get; set; }
         public EnumUserPreferenceType PreferenceType { get; set; }
         public string Value { get; set; } = string.Empty;

@@ -4,15 +4,14 @@ using WMS_backend.Models.Enums;
 
 namespace WMS_backend.Models.DBModels
 {
-    public class PurchaseOrder
+    public class PurchaseOrder : Crudable
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid PurchaseOrderId { get; set; }
         public string PurchaseOrderNumber { get; set; } = string.Empty;
         public EnumPOStatus POStatus { get; set; } = EnumPOStatus.Draft;
-        public Guid LocationId { get; set; }
-        public Guid SupplierId { get; set; }
-        public long UserId { get; set; }
+        public long LocationId { get; set; }
+        public long SupplierId { get; set; }
         public DateTime ExpectedDate { get; set; }
         public string? ShippingCarrier { get; set; }
         public string? TrackingNumber { get; set; }
@@ -25,12 +24,10 @@ namespace WMS_backend.Models.DBModels
         public float Shipping { get; set; }
         public float Total { get; set; }
         public bool IsArchived { get; set; } = false;
-        public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
-        public DateTime ModifiedDateTime { get; set; } = DateTime.UtcNow;
-
+        public long CompanyId { get; set; }
+        public virtual Company Company { get; set; }
         public virtual Location Location { get; set; }
         public virtual Supplier Supplier { get; set; }
-        public virtual AppUser User { get; set; }
 
         public virtual ICollection<PurchaseOrderItem> PurchaseOrderItems { get; set; } = new HashSet<PurchaseOrderItem>();
 

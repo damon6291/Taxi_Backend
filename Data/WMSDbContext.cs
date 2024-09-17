@@ -30,9 +30,6 @@ namespace WMS_backend.Data
         public virtual DbSet<PurchaseRequest> PurchaseRequest { get; set; }
         public virtual DbSet<Rack> Rack { get; set; }
         public virtual DbSet<Supplier> Supplier { get; set; }
-        public virtual DbSet<Team> Team { get; set; }
-        public virtual DbSet<TeamUser> TeamUser { get; set; }
-        public virtual DbSet<TeamUser> Tote { get; set; }
         public virtual DbSet<UserPermission> UserPermission { get; set; }
         public virtual DbSet<UserPreference> UserPreference { get; set; }
 
@@ -107,14 +104,6 @@ namespace WMS_backend.Data
 
             });
             modelBuilder.Entity<Supplier>(a =>
-            {
-
-            });
-            modelBuilder.Entity<Team>(a =>
-            {
-
-            });
-            modelBuilder.Entity<TeamUser>(a =>
             {
 
             });

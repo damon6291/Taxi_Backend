@@ -2,14 +2,14 @@
 
 namespace WMS_backend.Models.DBModels
 {
-    public class Supplier
+    public class Supplier : Crudable
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid SupplierId { get; set; }
+        public long SupplierId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Address { get; set; }
         public string? Contact { get; set; }
-        public string? Phone { get; set; }
+        public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
         public bool IsArchived { get; set; } = false;
         public long CompanyId { get; set; }
