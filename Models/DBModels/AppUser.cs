@@ -12,8 +12,8 @@ namespace WMS_backend.Models.DBModels
 
         public DateTime? LastLoginDateTime { get; set; }
         public long? CompanyId { get; set; }
-        public long CreatedUserId { get; set; }
-        public long ModifiedUserId { get; set; }
+        public long? CreatedUserId { get; set; }
+        public long? ModifiedUserId { get; set; }
         public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
         public DateTime ModifiedDateTime { get; set; } = DateTime.UtcNow;
 

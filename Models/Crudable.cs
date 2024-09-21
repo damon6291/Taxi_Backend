@@ -5,8 +5,8 @@ namespace WMS_backend.Models
 {
     public class Crudable
     {
-        public long CreatedUserId { get; set; }
-        public long ModifiedUserId { get; set; }
+        public long? CreatedUserId { get; set; }
+        public long? ModifiedUserId { get; set; }
         public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedDateTime { get; set; } = DateTime.UtcNow;
 

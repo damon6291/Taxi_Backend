@@ -30,6 +30,7 @@ namespace WMS_backend.Models.DBModels
         public virtual Supplier Supplier { get; set; }
 
         public virtual ICollection<PurchaseOrderItem> PurchaseOrderItems { get; set; } = new HashSet<PurchaseOrderItem>();
+        public virtual ICollection<PurchaseOrderHistory> PurchaseOrderHistories { get; set; } = new HashSet<PurchaseOrderHistory>();
 
     }
 }

@@ -6,7 +6,7 @@ namespace WMS_backend.Models.DBModels
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid InventoryId { get; set; }
-        public Guid ProductId { get; set; }
+        public Guid ProductVariantId { get; set; }
         public Guid RackId { get; set; }
         public int XSlot { get; set; }
         public int YSlot { get; set; }
@@ -15,7 +15,7 @@ namespace WMS_backend.Models.DBModels
         public DateTime? ExpirationDate { get; set; }
         public long CompanyId { get; set; }
         public virtual Company Company { get; set; }
-        public virtual Product Product { get; set; }
+        public virtual ProductVariant ProductVariant { get; set; }
         public virtual Rack Rack { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace WMS_backend.Models.DBModels
         public long LocationId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Address { get; set; }
-        public string? Phone { get; set; }
+        public string? PhoneNumber { get; set; }
         public EnumLocationType LocationType { get; set; }
         public bool IsArchived { get; set; } = false;
         public long CompanyId { get; set; }
