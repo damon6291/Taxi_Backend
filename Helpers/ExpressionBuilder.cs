@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Metadata;
-using WMS_backend.Models;
+using Taxi_Backend.Models;
 
-namespace WMS_backend.Helper
+namespace Taxi_Backend.Helper
 {
     public static class ExpressionBuilder
     {

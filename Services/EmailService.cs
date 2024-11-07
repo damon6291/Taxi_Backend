@@ -1,5 +1,5 @@
 ﻿
-namespace WMS_backend.Services
+namespace Taxi_Backend.Services
 {
     public class EmailService : IEmailService
     {

@@ -1,27 +1,24 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WMS_backend.Managers;
-using WMS_backend.Models;
-using WMS_backend.Services;
-using WMS_backend.Data;
-using WMS_backend.Mapper;
-using WMS_backend.Models.DBModels;
+using Taxi_Backend.Managers;
+using Taxi_Backend.Models;
+using Taxi_Backend.Services;
+using Taxi_Backend.Data;
+using Taxi_Backend.Mapper;
+using Taxi_Backend.Models.DBModels;
 using Microsoft.AspNetCore.Identity;
-using WMS_backend.Models.User;
 
-namespace WMS_backend.Controllers
+namespace Taxi_Backend.Controllers
 {
     [Route("api/admin")]
     [ApiController]
     public class AdminController : ControllerBase
     {
-        private readonly IUserService userService;
         private readonly AuthManager authManager;
-        private readonly WMSDbContext context;
+        private readonly TaxiDBContext context;
 
-        public AdminController(IUserService userService, AuthManager authManager, WMSDbContext context)
+        public AdminController(AuthManager authManager, TaxiDBContext context)
         {
-            this.userService = userService;
             this.authManager = authManager;
             this.context = context;
         }

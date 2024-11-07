@@ -1,50 +1,34 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using WMS_backend.Data;
-using WMS_backend.Mapper;
-using WMS_backend.Models.Auth;
-using WMS_backend.Models.DBModels;
-using WMS_backend.Models.Enums;
-using WMS_backend.Models.Permission;
-using WMS_backend.Models.User;
-using WMS_backend.Services;
+using Taxi_Backend.Data;
+using Taxi_Backend.Mapper;
+using Taxi_Backend.Models.DBModels;
+using Taxi_Backend.Services;
 
-namespace WMS_backend.Managers
+namespace Taxi_Backend.Managers
 {
     public class AuthManager
     {
-        private readonly WMSDbContext context;
-        private readonly IUserService userService;
-        private readonly IEmailService emailService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly UserManager<AppUser> userManager;
 
-        public AuthManager(WMSDbContext context, IUserService userService, IEmailService emailService)
+        public AuthManager(IHttpContextAccessor httpContextAccessor, UserManager<AppUser> userManager)
         {
-            this.context = context;
-            this.userService = userService;
-            this.emailService = emailService;
+            _httpContextAccessor = httpContextAccessor;
+            this.userManager = userManager;
         }
 
-        public async Task<AppUser?> GetUser(long userId)
+        public async Task<AppUser?> GetLoggedInUser()
         {
-            var ret = await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
-            return ret;
+            var result = string.Empty;
+            if (_httpContextAccessor.HttpContext != null)
+            {
+                var temp = await userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                return temp;
+            }
+            return null;
         }
 
-        public async Task<AppUser?> GetActiveUserByEmail(string email)
-        {
-            var ret = await context.Users.FirstOrDefaultAsync(x => x.Email == email && !x.IsArchived);
-            return ret;
-        }
-
-        public async Task<string?> CheckPermission(long userId, EnumPermissionType[] permissions, bool isCrud)
-        {
-            string? ret = null;
-            var permissionList = permissions.Select(x => new { PermissionType = x }).ToList();
-            var havePermission = await context.UserPermission.Where(x => x.UserId == userId && isCrud ? x.IsCrud : true).WhereBulkContains(permissionList, x => x.PermissionType).CountAsync();
-            if (havePermission > 0) return ret;
-            ret = ("User does not have permission");
-            return ret;
-        }
 
     }
 }

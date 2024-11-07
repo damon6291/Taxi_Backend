@@ -2,24 +2,24 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using WMS_backend.Managers;
-using WMS_backend.Mapper;
-using WMS_backend.Models;
-using WMS_backend.Models.User;
-using WMS_backend.Services;
+using Taxi_Backend.Managers;
+using Taxi_Backend.Mapper;
+using Taxi_Backend.Models;
+using Taxi_Backend.Models.DTO;
+using Taxi_Backend.Services;
 
-namespace WMS_backend.Controllers
+namespace Taxi_Backend.Controllers
 {
     [Route("api/user")]
     [ApiController]
     [Authorize]
     public class UserController : ControllerBase
     {
-        private readonly IUserService userService;
+        private readonly AuthManager authManager;
         private readonly UserManager userManager;
-        public UserController(IUserService userService, UserManager userManager)
+        public UserController(AuthManager authManager, UserManager userManager)
         {
-            this.userService = userService;
+            this.authManager = authManager;
             this.userManager = userManager;
         }
 
@@ -27,10 +27,10 @@ namespace WMS_backend.Controllers
         public async Task<IActionResult> GetMe()
         {
             var ret = new ReturnModel();
-            var user = await userService.GetUser();
+            var user = await authManager.GetLoggedInUser();
             if (user == null) return Ok(ret.Logout());
 
-            var (res, msg) = await userManager.GetMe(user.Id);
+            var (res, msg) = await userManager.GetUserById(user.Id);
 
             if (!res) return Ok(ret.Fail(msg.ToString()));
 
@@ -39,31 +39,16 @@ namespace WMS_backend.Controllers
             return Ok(ret);
         }
 
-        [HttpGet("notification")]
-        public async Task<IActionResult> GetNotification()
-        {
-            var ret = new ReturnModel();
-            var user = await userService.GetUser();
-            if (user == null) return Ok(ret.Logout());
-
-            var (res, msg) = await userManager.GetNotification(user.Id);
-
-            if (!res) return Ok(ret.Fail(msg.ToString()));
-
-            ret.Success(msg);
-
-            return Ok(ret);
-        }
 
         [HttpGet("list")]
         public async Task<IActionResult> GetUsersList([Required] int pageNumber, [Required] int pageSize, string orderColumn = "", bool isAscending = true, string userName = "")
         {
             var ret = new ReturnModel();
-            var user = await userService.GetUser();
+            var user = await authManager.GetLoggedInUser();
             if (user == null) return Ok(ret.Logout());
 
             Page page = new Page(pageNumber, pageSize, orderColumn, isAscending);
-            List<Filter> filters = new List<Filter> { new Filter("Name", Op.Contains, userName)};
+            List<Filter> filters = new List<Filter> { new Filter("Name", Op.Contains, userName) };
             page.Filters = filters;
             var (count, res) = await userManager.GetUsers(page);
             List<UserDTO> dtos = new();

@@ -1,17 +1,18 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WMS_backend.Models.DBModels
+namespace Taxi_Backend.Models.DBModels
 {
     public class AppUser : IdentityUser<long>
     {
+        public long CompanyId { get; set; }
         public bool IsArchived { get; set; } = false;
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Name => FirstName + " " + LastName;
+        public int DriverNumber { get; set; }
 
         public DateTime? LastLoginDateTime { get; set; }
-        public long? CompanyId { get; set; }
         public long? CreatedUserId { get; set; }
         public long? ModifiedUserId { get; set; }
         public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
@@ -21,20 +22,12 @@ namespace WMS_backend.Models.DBModels
         public virtual AppUser CreatedUser { get; set; }
         [ForeignKey("ModifiedUserId")]
         public virtual AppUser ModifiedUser { get; set; }
-        public virtual Company? Company { get; set; }
+        public virtual Company Company { get; set; }
 
-        [InverseProperty("User")]
-        public virtual ICollection<UserPermission> UserPermissions { get; set; } = new HashSet<UserPermission>();
-        public virtual ICollection<UserPreference> UserPreferences { get; set; } = new HashSet<UserPreference>();
-        public virtual ICollection<Notification> Notifications { get; set; } = new HashSet<Notification>();
-        [InverseProperty("CreatedUser")]
-        public virtual ICollection<PurchaseOrder> CreatedPurchaseOrders { get; set; } = new HashSet<PurchaseOrder>();
-        [InverseProperty("ModifiedUser")]
-        public virtual ICollection<PurchaseOrder> ModifiedPurchaseOrders { get; set; } = new HashSet<PurchaseOrder>();
-        [InverseProperty("CreatedUser")]
-        public virtual ICollection<PurchaseRequest> CreatedPurchaseRequests { get; set; } = new HashSet<PurchaseRequest>();
-        [InverseProperty("ModifiedUser")]
-        public virtual ICollection<PurchaseRequest> ModifiedPurchaseRequests { get; set; } = new HashSet<PurchaseRequest>();
+        public ICollection<DriverQueue> DriverQueues { get; set; } = new HashSet<DriverQueue>();
+        public ICollection<Trip> Trips { get; set; } = new HashSet<Trip>();
+        public ICollection<Taxi> Taxis { get; set; } = new HashSet<Taxi>();
+
 
     }
 }

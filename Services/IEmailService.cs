@@ -1,4 +1,4 @@
-﻿namespace WMS_backend.Services
+﻿namespace Taxi_Backend.Services
 {
     public interface IEmailService
     {

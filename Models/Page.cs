@@ -1,7 +1,7 @@
 ﻿
-using WMS_backend.Helper;
+using Taxi_Backend.Helper;
 
-namespace WMS_backend.Models
+namespace Taxi_Backend.Models
 {
     public class Page
     {

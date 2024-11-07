@@ -1,50 +1,32 @@
-﻿using WMS_backend.Data;
-using WMS_backend.Mapper;
-using WMS_backend.Models;
-using WMS_backend.Models.DBModels;
-using WMS_backend.Services;
+﻿using Taxi_Backend.Data;
+using Taxi_Backend.Mapper;
+using Taxi_Backend.Models;
+using Taxi_Backend.Models.DBModels;
+using Taxi_Backend.Services;
 
-namespace WMS_backend.Managers
+namespace Taxi_Backend.Managers
 {
     public class UserManager
     {
-        private readonly WMSDbContext context;
+        private readonly TaxiDBContext context;
         private readonly AuthManager authManager;
 
-        public UserManager(WMSDbContext context, AuthManager authManager)
+        public UserManager(TaxiDBContext context, AuthManager authManager)
         {
             this.context = context;
             this.authManager = authManager;
         }
 
-
-        public async Task<(bool, object)> GetMe(long userId)
+        public async Task<(bool, object)> GetUserById(long userId)
         {
             try
             {
-                var user = await authManager.GetUser(userId);
+                var user = await context.Users.FindAsync(userId);
                 if (user == null) return (false, "User does not exist");
 
                 var userDTO = UserMapper.UserToDTO(user);
 
                 return (true, userDTO);
-            }
-            catch (Exception ex)
-            {
-                return (false, ex.Message);
-            }
-        }
-
-        public async Task<(bool, object)> GetNotification(long userId)
-        {
-            try
-            {
-                var user = await authManager.GetUser(userId);
-                if (user == null) return (false, "User does not exist");
-
-                var notifications = context.Notification.Where(x => x.UserId == userId && !x.IsArchived).Select(x => UserMapper.NotificationToDTO(x)).ToList();
-
-                return (true, notifications);
             }
             catch (Exception ex)
             {

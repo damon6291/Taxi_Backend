@@ -1,7 +1,7 @@
-﻿using WMS_backend.Models.DBModels;
-using WMS_backend.Models.User;
+﻿using Taxi_Backend.Models.DBModels;
+using Taxi_Backend.Models.DTO;
 
-namespace WMS_backend.Mapper
+namespace Taxi_Backend.Mapper
 {
     public static class UserMapper
     {
@@ -19,7 +19,6 @@ namespace WMS_backend.Mapper
                 LastLoginDateTime = user.LastLoginDateTime,
                 ModifiedDateTime = user.ModifiedDateTime,
                 ModifiedUser = user.ModifiedUser == null ? null : UserToDTO(user.ModifiedUser),
-                IsAdmin = user.CompanyId == null,
             };
         }
 
@@ -31,19 +30,6 @@ namespace WMS_backend.Mapper
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 PhoneNumber = dto.PhoneNumber,
-            };
-        }
-
-
-        public static NotificationDTO NotificationToDTO(Notification db)
-        {
-            return new NotificationDTO()
-            {
-                NotificationId= db.NotificationId,
-                NotificationType=db.NotificationType.ToString(),
-                Name=db.Name,
-                Description=db.Description,
-                CreatedDateTime = db.CreatedDateTime,
             };
         }
 

@@ -14,11 +14,12 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using WMS_backend.Models.Auth;
-using WMS_backend.Models.DBModels;
+using Taxi_Backend.Models.DBModels;
+using Taxi_Backend.Models.DTO;
 
 namespace Microsoft.AspNetCore.Routing;
 
@@ -86,13 +87,12 @@ public static class IdentityApiEndpointRouteBuilderExtensions
             };
             await userStore.SetUserNameAsync(user, email, CancellationToken.None);
             await emailStore.SetEmailAsync(user, email, CancellationToken.None);
-            var result = await userManager.CreateAsync(user, registration.Password);
-            
+            var userResult = await userManager.CreateAsync(user, registration.Password);
+            var roleResult = await userManager.AddToRoleAsync(user, registration.Role.ToString());
 
-            if (!result.Succeeded)
-            {
-                return CreateValidationProblem(result);
-            }
+
+            if (!userResult.Succeeded) return CreateValidationProblem(userResult);
+            if (!roleResult.Succeeded) return CreateValidationProblem(roleResult);
 
             //await SendConfirmationEmailAsync(user, userManager, context, email);
             return TypedResults.Ok();

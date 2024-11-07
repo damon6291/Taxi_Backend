@@ -1,4 +1,4 @@
-﻿namespace WMS_backend.Models
+﻿namespace Taxi_Backend.Models
 {
     public class ReturnModel
     {
@@ -10,7 +10,7 @@
         public ReturnModel Fail(string str)
         {
             IsSuccess = false;
-            ErrorMessages.Add(str); 
+            ErrorMessages.Add(str);
             return this;
         }
         public ReturnModel Fail(List<string> str)

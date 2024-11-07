@@ -1,8 +1,9 @@
-﻿namespace WMS_backend.Models.Enums
+﻿namespace Taxi_Backend.Models.Enums
 {
-    public enum EnumLocationType
+    public enum LocationType
     {
-        Storage = 1,
-        Store = 2,
+        POI,
+        ADDRESS,
+        PLACE
     }
 }

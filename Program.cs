@@ -1,15 +1,15 @@
-using WMS_backend.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using Taxi_Backend.Services;
 using System.Text;
-using WMS_backend.Data;
+using Taxi_Backend.Data;
 using Microsoft.EntityFrameworkCore;
-using WMS_backend.Managers;
+using Taxi_Backend.Managers;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using WMS_backend.Models.DBModels;
+using Taxi_Backend.Models.DBModels;
+using Taxi_Backend.Hubs;
+using Taxi_Backend;
+using Ta.Managers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,24 +18,31 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 var conn = builder.Configuration.GetConnectionString("defaultString");
-var token = builder.Configuration.GetSection("AppSettings:Token").Value;
 
-builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IMapService, MapService>();
+
+builder.Services.AddScoped<TaxiHub>();
 
 builder.Services.AddScoped<AuthManager>();
-builder.Services.AddScoped<PermissionManager>();
 builder.Services.AddScoped<UserManager>();
-builder.Services.AddScoped<ProductManager>();
+builder.Services.AddScoped<BackgroundManager>();
+builder.Services.AddScoped<HubManager>();
+builder.Services.AddScoped<TripManager>();
+builder.Services.AddScoped<CompanyManager>();
+builder.Services.AddScoped<DriverManager>();
+
+builder.Services.AddHostedService<BackgroundWorkerServiceCustomerQueue>();
+builder.Services.AddHostedService<BackgroundWorkerServiceMatching>();
 
 builder.Services.AddTransient<DataGenerator>();
 
-builder.Services.AddDbContext<WMSDbContext>(options => options.UseNpgsql(conn).UseLowerCaseNamingConvention());
+builder.Services.AddDbContext<TaxiDBContext>(options => options.UseNpgsql(conn).UseLowerCaseNamingConvention());
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddIdentityCore<AppUser>()
-    .AddEntityFrameworkStores<WMSDbContext>()
+builder.Services.AddIdentity<AppUser, AppRole>()
+    .AddEntityFrameworkStores<TaxiDBContext>()
     .AddApiEndpoints();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -62,17 +69,26 @@ builder.Services.AddCors(options => options.AddPolicy(name: "corsapp", policy =>
     policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
 }));
 
+builder.Services.AddSignalR(e =>
+{
+    e.MaximumReceiveMessageSize = 102400000;
+    e.KeepAliveInterval = TimeSpan.FromMinutes(5);
+    e.ClientTimeoutInterval = TimeSpan.FromMinutes(10);
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsProduction())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(x => x.DocExpansion(docExpansion: Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None));
+    app.UseMiddleware<SwaggerBasicAuthMiddleware>();
 }
+app.UseSwagger();
+app.UseSwaggerUI(x => x.DocExpansion(docExpansion: Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None));
 
 app.MapCustomIdentityApi<AppUser>();
 
+app.UseRouting();
 
 app.UseCors("corsapp");
 
@@ -82,12 +98,14 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.MapHub<TaxiHub>("/Taxi");
+
 // Auto migrate db on start
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
-    var context = services.GetRequiredService<WMSDbContext>();
+    var context = services.GetRequiredService<TaxiDBContext>();
     if (context.Database.GetPendingMigrations().Any())
     {
         context.Database.Migrate();

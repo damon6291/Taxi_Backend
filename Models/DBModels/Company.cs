@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using static System.Net.Mime.MediaTypeNames;
+using Taxi_Backend.Models.Enums;
 
-namespace WMS_backend.Models.DBModels
+namespace Taxi_Backend.Models.DBModels
 {
     public class Company
     {
@@ -13,16 +13,13 @@ namespace WMS_backend.Models.DBModels
         public string? Contact { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
+        public EnumTimeZone TimeZone { get; set; } = EnumTimeZone.Eastern;
         public bool IsArchived { get; set; } = false;
         public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
 
         public virtual ICollection<AppUser> Users { get; set; } = new HashSet<AppUser>();
-        public virtual ICollection<Location> Locations { get; set; } = new HashSet<Location>();
-        public virtual ICollection<CompanyPermission> CompanyPermissions { get; set; } = new HashSet<CompanyPermission>();
-        public virtual ICollection<Supplier> Suppliers { get; set; } = new HashSet<Supplier>();
-        public virtual ICollection<Client> Clients { get; set; } = new HashSet<Client>();
-        public virtual ICollection<CompanyPlatform> CompanyPlatforms { get; set; } = new HashSet<CompanyPlatform>();
-        public virtual ICollection<CompanyCourier> CompanyCouriers { get; set; } = new HashSet<CompanyCourier>();
-        public virtual ICollection<Order> Orders { get; set; } = new HashSet<Order>();
+        public virtual ICollection<Trip> Trips { get; set; } = new HashSet<Trip>();
+        public virtual ICollection<DriverQueue> DriverQueues { get; set; } = new HashSet<DriverQueue>();
+        public virtual ICollection<CustomerQueue> CustomerQueues { get; set; } = new HashSet<CustomerQueue>();
     }
 }
