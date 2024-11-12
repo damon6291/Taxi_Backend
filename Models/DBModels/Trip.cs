@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Drawing;
 using Taxi_Backend.Models.DBModels;
 
-namespace Taxi_Backend.Models
+namespace Taxi_Backend.Models.DBModels
 {
     public class Trip
     {
@@ -18,10 +18,10 @@ namespace Taxi_Backend.Models
         public EnumTripStatus TripStatus { get; set; } = EnumTripStatus.QUEUE;
         public EnumTaxiSize CalledTaxiSize { get; set; }
         public string? PickupAddress { get; set; }
-        public string? DroppOffAddress { get; set; }
-        public decimal Mileage { get; set; } // ex) 4.5 miles to dest
-        public string AlcoholPhoneNumber { get; set; } = string.Empty;
-        public long? AlcoholTripId { get; set; }
+        public string? DropoffAddress { get; set; }
+        //public decimal Mileage { get; set; } // ex) 4.5 miles to dest
+        //public string AlcoholPhoneNumber { get; set; } = string.Empty;
+        //public long? AlcoholTripId { get; set; }
         [MaxLength(500)]
         public string? Notes { get; set; }
 

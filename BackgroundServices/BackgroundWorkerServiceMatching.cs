@@ -21,8 +21,8 @@ public class BackgroundWorkerServiceMatching : BackgroundService
         {
             await using AsyncServiceScope asyncScope = _factory.CreateAsyncScope();
             var manager = asyncScope.ServiceProvider.GetRequiredService<BackgroundManager>();
-            await manager.MatchTrip();
-            await Task.Delay(3000, stoppingToken); // 3sec
+            await manager.MatchAllCustomerAndDriverQueues();
+            await Task.Delay(5000, stoppingToken); // 5sec
         }
     }
 }

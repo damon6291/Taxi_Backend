@@ -11,7 +11,7 @@ using Taxi_Backend.Services;
 
 namespace Taxi_Backend.Data
 {
-    public class TaxiDBContext : IdentityDbContext<AppUser, AppRole, long>
+    public class TaxiDBContext : IdentityDbContext<AppUser, AppRole, long, IdentityUserClaim<long>, AppUserRole, IdentityUserLogin<long>, IdentityRoleClaim<long>, IdentityUserToken<long>>
     {
         private readonly DataGenerator dataGenerator;
 
@@ -60,6 +60,21 @@ namespace Taxi_Backend.Data
             modelBuilder.Entity<AppUser>(a =>
             {
                 a.HasIndex(x => x.CompanyId);
+                a.HasMany(e => e.UserRoles)
+                .WithOne(e => e.User)
+                .HasForeignKey(ur => ur.UserId)
+                .IsRequired();
+            });
+            modelBuilder.Entity<AppUserRole>(a =>
+            {
+
+            });
+            modelBuilder.Entity<AppRole>(a =>
+            {
+                a.HasMany(e => e.UserRoles)
+                .WithOne(e => e.Role)
+                .HasForeignKey(ur => ur.RoleId)
+                .IsRequired();
             });
             modelBuilder.Entity<BackgroundHistory>(a =>
             {
@@ -114,9 +129,10 @@ namespace Taxi_Backend.Data
                 a.HasIndex(x => x.CompletedTime);
             });
 
-            //modelBuilder.Entity<Company>().HasData(dataGenerator.GenerateCompany());
-            //modelBuilder.Entity<AppUser>().HasData(dataGenerator.GenerateUser());
-            //modelBuilder.Entity<Client>().HasData(dataGenerator.GenerateClient());
+            modelBuilder.Entity<Company>().HasData(dataGenerator.GenerateCompany());
+            modelBuilder.Entity<AppUser>().HasData(dataGenerator.GenerateUser());
+            modelBuilder.Entity<AppUserRole>().HasData(dataGenerator.GenerateUserRole());
+            modelBuilder.Entity<Customer>().HasData(dataGenerator.GenerateCustomer());
             //modelBuilder.Entity<Supplier>().HasData(dataGenerator.GenerateSupplier());
             //modelBuilder.Entity<Location>().HasData(dataGenerator.GenerateLocation());
             //modelBuilder.Entity<Platform>().HasData(dataGenerator.GeneratePlatform());

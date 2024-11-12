@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations.Schema;
 using Taxi_Backend.Models.DBModels;
 
-namespace Taxi_Backend.Models
+namespace Taxi_Backend.Models.DBModels
 {
     public class DriverQueue
     {

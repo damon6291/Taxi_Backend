@@ -1,4 +1,6 @@
-﻿namespace Taxi_Backend.Models.DTO
+﻿using Taxi_Backend.Models.Enums;
+
+namespace Taxi_Backend.Models.DTO
 {
     public class UserDTO
     {
@@ -8,11 +10,15 @@
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Name => FirstName + " " + LastName;
-        public int DriverNumber { get; set; }
+        public string DriverNumber { get; set; }
         public string? PhoneNumber { get; set; }
         public DateTime? LastLoginDateTime { get; set; }
         public DateTime? CreatedDateTime { get; set; }
         public DateTime? ModifiedDateTime { get; set; }
-        public UserDTO? ModifiedUser { get; set; }
+        // Add other properties as needed
+
+        public EnumUserRole EnumUserRole { get; set; }
+        public string UserRole { get; set; }
+        public string ModifiedUserName { get; set; }
     }
 }

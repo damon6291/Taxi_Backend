@@ -10,7 +10,7 @@ namespace Taxi_Backend.Models.DBModels
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Name => FirstName + " " + LastName;
-        public int DriverNumber { get; set; }
+        public string? DriverNumber { get; set; }
 
         public DateTime? LastLoginDateTime { get; set; }
         public long? CreatedUserId { get; set; }
@@ -27,6 +27,7 @@ namespace Taxi_Backend.Models.DBModels
         public ICollection<DriverQueue> DriverQueues { get; set; } = new HashSet<DriverQueue>();
         public ICollection<Trip> Trips { get; set; } = new HashSet<Trip>();
         public ICollection<Taxi> Taxis { get; set; } = new HashSet<Taxi>();
+        public ICollection<AppUserRole> UserRoles { get; set; } = new HashSet<AppUserRole>();
 
 
     }

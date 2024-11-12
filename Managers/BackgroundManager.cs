@@ -6,6 +6,8 @@ using Taxi_Backend.Services;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using USAddress;
+using Taxi_Backend.Models.DBModels;
+using Taxi_Backend.Mapper;
 
 namespace Taxi_Backend.Managers
 {
@@ -33,9 +35,25 @@ namespace Taxi_Backend.Managers
         /// <returns></returns>
         public async Task RemovePendingCustomerQueue()
         {
-            var curTime = DateTime.UtcNow.AddMinutes(-30);
-            var customerQueues = ctx.CustomerQueue.Include(x => x.Trip).Where(x => x.QueueStatus == EnumQueueStatus.PENDING && x.CreatedDateTime < curTime);
-            await ctx.BulkDeleteAsync(customerQueues);
+            try
+            {
+                var curTime = DateTime.UtcNow.AddMinutes(-30);
+                var customerQueues = ctx.CustomerQueue
+                    .Include(x => x.Trip)
+                    .Where(x => x.QueueStatus == EnumQueueStatus.PENDING && x.CreatedDateTime < curTime);
+
+                var trips = customerQueues.Select(x => x.Trip);
+
+                ctx.RemoveRange(trips);
+                ctx.RemoveRange(customerQueues);
+                await ctx.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions
+                Console.WriteLine($"An error occurred while removing pending customer queues: {ex.Message}");
+                // Optionally log the exception or handle it as needed
+            }
         }
 
         /// <summary>
@@ -44,113 +62,103 @@ namespace Taxi_Backend.Managers
         /// <returns></returns>
         public async Task<bool> RemoveDriverCanceledCustomerQueue()
         {
-            var customerQueues = await ctx.CustomerQueue.Include(x => x.Trip).Where(x => x.QueueStatus == EnumQueueStatus.DRIVERCANCELED).ToListAsync();
-            await ctx.BulkDeleteAsync(customerQueues);
+            try
+            {
+                var customerQueues = ctx.CustomerQueue
+                .Include(x => x.Trip)
+                .Where(x => x.QueueStatus == EnumQueueStatus.DRIVERCANCELED);
+
+                var trips = customerQueues.Select(x => x.Trip);
+
+                ctx.RemoveRange(trips);
+                ctx.RemoveRange(customerQueues);
+                await ctx.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions
+                Console.WriteLine($"An error occurred while removing driver-canceled customer queues: {ex.Message}");
+                // Optionally log the exception or handle it as needed
+                return false;
+            }
+        }
+
+        public async Task<bool> MatchAllCustomerAndDriverQueues()
+        {
+            var companies = await ctx.DriverQueue
+                .Where(x => x.QueueStatus == EnumQueueStatus.WAITING)
+                .Select(x => x.CompanyId)
+                .Distinct()
+                .ToListAsync();
+
+            try
+            {
+                // Run parallel processing for each company
+                var tasks = companies.Select(companyId => MatchCustomerAndDriverQueue(companyId));
+                await Task.WhenAll(tasks);
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions
+                Console.WriteLine($"An error occurred during matching: {ex.Message}");
+                return false;
+            }
+
             return true;
         }
 
-        /// <summary>
-        /// Trip matching algorithm
-        /// </summary>
-        /// <returns></returns>
-        public async Task<bool> MatchTrip()
+        private async Task MatchCustomerAndDriverQueue(long companyId)
         {
-            //var matchedTripCount = 0;
-            //var error = string.Empty;
-            //var driverQueues = await ctx.DriverQueue
-            //    .Include(x => x.Driver)
-            //        .ThenInclude(x => x.Company)
-            //    .Include(x => x.Driver)
-            //        .ThenInclude(x => x.Taxi)
-            //    .Where(x => x.QueueStatus == EnumQueueStatus.WAITING)
-            //    .OrderBy(x => x.CreatedDateTime)
-            //    .ToListAsync();
-            //var customerQueues = await ctx.CustomerQueue
-            //    .Include(x => x.Trip)
-            //    .OrderBy(x => x.CreatedDateTime)
-            //    .Where(x => x.QueueStatus == EnumQueueStatus.WAITING).ToListAsync();
+            using (var scope = factory.CreateScope())
+            {
+                var scopedCtx = scope.ServiceProvider.GetRequiredService<TaxiDBContext>();
 
-            //try
-            //{
-            //    foreach (var dq in driverQueues)
-            //    {
-            //        foreach (var cq in customerQueues)
-            //        {
-            //            // Is Queue Taken?
-            //            if (cq.QueueStatus == EnumQueueStatus.PENDING) continue;
-            //            if ((int)(DateTime.UtcNow - dq.DeclinedTime).TotalSeconds < Constants.DRIVER_MATCH_IDLE_TIME) continue;
+                var driverQueues = await scopedCtx.DriverQueue
+                    .Include(x => x.Driver)
+                    .Where(x => x.QueueStatus == EnumQueueStatus.WAITING && x.CompanyId == companyId)
+                    .OrderBy(x => x.CreatedDateTime)
+                    .ToListAsync();
 
-            //            // Is Taxi Size the possible?
-            //            if (dq.Driver.Taxi.Size < cq.Trip.CalledTaxiSize) continue;
-            //            // if Trip never rejected?
-            //            if (dq.DriverQueueRejectedCustomerQueues != null && dq.DriverQueueRejectedCustomerQueues.Count > 0)
-            //            {
-            //                if (dq.DriverQueueRejectedCustomerQueues.Any(x => x.CustomerQueueID == cq.CustomerQueueID)) continue;
-            //            }
+                var customerQueues = await scopedCtx.CustomerQueue
+                    .Include(x => x.Trip)
+                    .Where(x => x.QueueStatus == EnumQueueStatus.WAITING && x.CompanyId == companyId)
+                    .OrderBy(x => x.CreatedDateTime)
+                    .ToListAsync();
 
+                foreach (var dq in driverQueues)
+                {
+                    await MatchDriverWithCustomer(dq, customerQueues, scopedCtx);
+                }
+            }
+        }
 
+        private async Task MatchDriverWithCustomer(DriverQueue dq, List<CustomerQueue> customerQueues, TaxiDBContext scopedCtx)
+        {
+            foreach (var cq in customerQueues)
+            {
+                if (dq.CompanyId != cq.CompanyId) continue;
+                if (dq.QueueStatus != EnumQueueStatus.WAITING) continue;
+                if (cq.QueueStatus != EnumQueueStatus.WAITING) continue;
 
-            //            if (cq.CompanyID != null)
-            //            {
-            //                //Company Restrictions
-            //            }
-            //            else
-            //            {
-            //                //Customer Restrictions
+                //var distance = GeoCalculator.GetDistance(dq.Latitude, dq.Longitude, cq.Trip.PickupLocation.Latitude, cq.Trip.PickupLocation.Longitude);
+                var distance = 3;
 
-            //                //Driver is not eligible for app taxi. (only company allowed)
-            //                if (!dq.Driver.IsAppTaxi) continue;
+                if (distance > Constants.TRIP_MATCH_MILE_RANGE) continue;
+                if (dq.QueueStatus != EnumQueueStatus.WAITING) continue;
+                if (cq.QueueStatus != EnumQueueStatus.WAITING) continue;
 
-            //                // Is Trip Operatable state?
-            //                if (!dq.Driver.Company.CompanyOperatingStates.Any(x => x.FromState == cq.Trip.PickupLocation.State && (x.ToState == null || x.ToState == cq.Trip.DropoffLocation.State))) continue;
+                dq.QueueStatus = EnumQueueStatus.PENDING;
+                dq.TripId = cq.TripId;
+                cq.QueueStatus = EnumQueueStatus.PENDING;
+                cq.Trip.TripStatus = EnumTripStatus.QUEUE;
+                await scopedCtx.SaveChangesAsync();
 
-            //                // Newyork Airport situation
-            //                if ((cq.Trip.PickupLocation.LocationType == EnumLocationType.AIRPORT && (cq.Trip.PickupLocation.State == EnumState.NY || cq.Trip.PickupLocation.State == EnumState.NYC))
-            //                    || (cq.Trip.DropoffLocation.LocationType == EnumLocationType.AIRPORT && (cq.Trip.DropoffLocation.State == EnumState.NY || cq.Trip.DropoffLocation.State == EnumState.NYC)))
-            //                {
-            //                    if (!dq.Driver.TLCApproved) continue;
-            //                }
+                //var tripReturnForDriver = await tripManager.TripReturnForDriver(cq.Trip);
+                //await hubManager.SendToClient($"{Constants.DRIVER}{dq.DriverId}", Constants.MATCH, cq.Trip.TripStatus, tripReturnForDriver);
 
-            //                // Is Close range?
-            //                // This Distance is inaccurate. Change it to our own API later.
-            //                var mile = GeoCalculator.GetDistance(dq.Latitude, dq.Longitude, cq.Trip!.PickupLocation!.Latitude, cq.Trip!.PickupLocation!.Longitude);
-            //                var waitedTime = (int)(DateTime.UtcNow - cq.CreatedDateTime).TotalMinutes;
-            //                if (mile > Constants.TRIP_MATCH_MILE_RANGE + waitedTime) continue;
-            //            }
-
-            //            // if match
-            //            dq.QueueStatus = EnumQueueStatus.PENDING;
-            //            dq.TripID = cq.TripID;
-            //            dq.CustomerQueueID = cq.CustomerQueueID;
-            //            cq.QueueStatus = EnumQueueStatus.PENDING;
-            //            ctx.SaveChanges();
-            //            matchedTripCount += 1;
-
-            //            var tripReturnForDriver = await tripManager.TripReturnForDriver(cq.Trip);
-            //            //notify driver
-            //            await hubManager.SendToClient($"{Constants.DRIVER}{dq.DriverID}", Constants.MATCH, cq.Trip.TripStatus, tripReturnForDriver);
-
-            //            break;
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    error = ex.ToString();
-            //}
-            //finally
-            //{
-            //    var cqCount = customerQueues.Count();
-            //    var dqCount = driverQueues.Count();
-            //    var err = error != string.Empty;
-            //    if ((cqCount != 0 && dqCount != 0) || err)
-            //    {
-            //        AddToBackgroundHistory(cqCount, dqCount, matchedTripCount, 0, err, error, "Matching");
-            //    }
-
-            //}
-
-            return true;
+                break;
+            }
         }
 
         private void AddToBackgroundHistory(int cqCount, int dqCount, int successCount, int errorCount, bool err, string errMsg, string process)

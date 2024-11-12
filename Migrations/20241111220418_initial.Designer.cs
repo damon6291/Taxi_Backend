@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Taxi_Backend.Data;
@@ -11,9 +12,11 @@ using Taxi_Backend.Data;
 namespace Taxi_Backend.Migrations
 {
     [DbContext(typeof(TaxiDBContext))]
-    partial class TaxiDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241111220418_initial")]
+    partial class initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

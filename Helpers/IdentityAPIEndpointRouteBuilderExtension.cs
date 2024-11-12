@@ -88,7 +88,7 @@ public static class IdentityApiEndpointRouteBuilderExtensions
             await userStore.SetUserNameAsync(user, email, CancellationToken.None);
             await emailStore.SetEmailAsync(user, email, CancellationToken.None);
             var userResult = await userManager.CreateAsync(user, registration.Password);
-            var roleResult = await userManager.AddToRoleAsync(user, registration.Role.ToString());
+            var roleResult = await userManager.AddToRoleAsync(user, registration.EnumUserRole.ToString());
 
 
             if (!userResult.Succeeded) return CreateValidationProblem(userResult);

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Taxi_Backend.Models
+namespace Taxi_Backend.Models.DBModels
 {
     public class BackgroundHistory
     {

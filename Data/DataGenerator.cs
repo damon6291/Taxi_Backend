@@ -1,5 +1,7 @@
 ﻿using Bogus;
+using Microsoft.AspNetCore.Identity;
 using System;
+using Taxi_Backend.Managers;
 using Taxi_Backend.Models.DBModels;
 using Taxi_Backend.Models.Enums;
 
@@ -9,7 +11,7 @@ namespace Taxi_Backend.Data
     {
         Faker<AppUser> userFake;
         Faker<Company> companyFake;
-        //Faker<Client> clientFake;
+        Faker<Customer> customerFake;
         //Faker<Supplier> supplierFake;
         //Faker<Location> locationFake;
         //Faker<Product> productFake;
@@ -18,7 +20,8 @@ namespace Taxi_Backend.Data
 
         List<Company> company;
         List<AppUser> user;
-        //List<Client> client;
+        List<AppUserRole> role;
+        List<Customer> customer;
         //List<Supplier> supplier;
         //List<Location> location;
         //List<Platform> platform;
@@ -27,6 +30,7 @@ namespace Taxi_Backend.Data
         //List<ProductVariant> productVariant;
         //List<CompanyPermission> companyPermission;
         //List<UserPermission> userPermission;
+
 
         public DataGenerator()
         {
@@ -59,7 +63,8 @@ namespace Taxi_Backend.Data
                 .RuleFor(u => u.PasswordHash, f => "AQAAAAIAAYagAAAAEJCx0o43IjUq0DFnyjUNecUU9c/Iluz+U8QWtmqk3fT7PpJXB0sfDD+fBomd62Bohw==")
                 .RuleFor(u => u.SecurityStamp, f => "E7EYWZPTSKQWK5AVQYJDWIUBFAUHH4PI")
                 .RuleFor(u => u.CompanyId, f => f.PickRandom(company).CompanyId);
-            user = userFake.Generate(10);
+            user = userFake.Generate(100);
+
             foreach (var u in user)
             {
                 u.UserName = u.Email;
@@ -68,22 +73,31 @@ namespace Taxi_Backend.Data
             }
             return user;
         }
-        //public List<Client> GenerateClient()
-        //{
-        //    var clientId = 100;
-        //    clientFake = new Faker<Client>()
-        //        .RuleFor(u => u.ClientId, f => clientId++)
-        //        .RuleFor(u => u.Name, f => f.Name.FullName())
-        //        .RuleFor(u => u.Address1, f => f.Address.StreetAddress().OrNull(f))
-        //        .RuleFor(u => u.Address2, f => f.Address.SecondaryAddress().OrNull(f))
-        //        .RuleFor(u => u.State, f => f.Address.State().OrNull(f))
-        //        .RuleFor(u => u.City, f => f.Address.City().OrNull(f))
-        //        .RuleFor(u => u.Zip, f => f.Address.ZipCode().OrNull(f))
-        //        .RuleFor(u => u.Note, f => f.Random.Words(10).OrNull(f))
-        //        .RuleFor(u => u.CompanyId, f => f.PickRandom(company).CompanyId);
-        //    client = clientFake.Generate(100);
-        //    return client;
-        //}
+
+        public List<AppUserRole> GenerateUserRole()
+        {
+            role = new List<AppUserRole>();
+            Array values = Enum.GetValues(typeof(EnumUserRole));
+            Random random = new Random();
+            for (var idx = 0; idx < user.Count; idx++)
+            {
+                EnumUserRole randomBar = (EnumUserRole)values.GetValue(random.Next(values.Length));
+                var u = user[idx];
+                role.Add(new AppUserRole { UserId = u.Id, RoleId = (long)randomBar });
+            }
+            return role;
+        }
+
+        public List<Customer> GenerateCustomer()
+        {
+            var customerId = 100;
+            customerFake = new Faker<Customer>()
+                .RuleFor(u => u.CustomerId, f => customerId++)
+                .RuleFor(u => u.PhoneNumber, f => f.Phone.PhoneNumber())
+                .RuleFor(u => u.CreatedDateTime, f => f.Date.Recent().ToUniversalTime());
+            customer = customerFake.Generate(100);
+            return customer;
+        }
 
         //public List<Supplier> GenerateSupplier()
         //{

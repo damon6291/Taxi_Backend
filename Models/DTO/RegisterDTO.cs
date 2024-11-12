@@ -9,6 +9,6 @@ namespace Taxi_Backend.Models.DTO
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public long CompanyId { get; set; }
-        public EnumUserRole Role { get; set; }
+        public EnumUserRole EnumUserRole { get; set; }
     }
 }

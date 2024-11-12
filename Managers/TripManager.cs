@@ -2,9 +2,9 @@
 using USAddress;
 using Taxi_Backend.Helper;
 using Taxi_Backend.Data;
-using Taxi_Backend.Models;
 using Taxi_Backend.Models.Enums;
 using Taxi_Backend.Services;
+using Taxi_Backend.Models.DBModels;
 
 namespace Taxi_Backend.Managers
 {
@@ -311,27 +311,6 @@ namespace Taxi_Backend.Managers
 
         //    return trips;
         //}
-
-        public async Task<CustomerQueue?> RemoveCustomerQueue(long customerId)
-        {
-            var customerQueue = await ctx.CustomerQueue.Where(x => customerId == x.CustomerId).FirstOrDefaultAsync();
-            if (customerQueue == null) { return null; }
-            ctx.CustomerQueue.Remove(customerQueue);
-            await ctx.SaveChangesAsync();
-
-            return customerQueue;
-        }
-
-
-        public async Task<CustomerQueue?> RemoveCustomerQueueByTripID(long tripId)
-        {
-            var customerQueue = await ctx.CustomerQueue.Where(x => x.TripId == tripId).FirstOrDefaultAsync();
-            if (customerQueue == null) { return null; }
-            ctx.CustomerQueue.Remove(customerQueue);
-            await ctx.SaveChangesAsync();
-
-            return customerQueue;
-        }
 
 
         //public async Task<TripReturnForDriver> TripReturnForDriver(Trip trip)

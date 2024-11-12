@@ -4,6 +4,8 @@ namespace Taxi_Backend
 {
     public static class Constants
     {
+        public static string DRIVER = "driver";
+        public static string COMPANY = "company";
         public static double TRIP_MATCH_MILE_RANGE = 5;
         public static int DRIVER_MATCH_IDLE_TIME = 2; // Driver needs to wait atleast 2 seconds to be matched / re matched.
 

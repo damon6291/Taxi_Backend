@@ -2,7 +2,7 @@ using Taxi_Backend.Models.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 using Taxi_Backend.Models.DBModels;
 
-namespace Taxi_Backend.Models
+namespace Taxi_Backend.Models.DBModels
 {
     public class Taxi
     {
