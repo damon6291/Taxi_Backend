@@ -18,7 +18,7 @@ namespace Taxi_Backend.Mapper
                 CreatedDateTime = user.CreatedDateTime,
                 LastLoginDateTime = user.LastLoginDateTime,
                 ModifiedDateTime = user.ModifiedDateTime,
-                ModifiedUserName = user.ModifiedUser.Name,
+                ModifiedUserName = user.ModifiedUser?.Name ?? "",
             };
         }
 

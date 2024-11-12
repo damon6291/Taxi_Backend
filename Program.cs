@@ -85,7 +85,7 @@ builder.Services.AddAuthorization();
 
 
 
-builder.Services.AddIdentity<AppUser, AppRole>()
+builder.Services.AddIdentityCore<AppUser>()
 
     .AddEntityFrameworkStores<TaxiDBContext>()
 
