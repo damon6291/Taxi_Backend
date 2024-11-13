@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using Taxi_Backend.Managers;
 using Taxi_Backend.Mapper;
 using Taxi_Backend.Models;
+using Taxi_Backend.Models.DBModels;
 using Taxi_Backend.Models.DTO;
 
 namespace Taxi_Backend.Controllers
@@ -36,7 +37,8 @@ namespace Taxi_Backend.Controllers
             if (!success)
                 return Ok(ret.Fail(response.ToString()));
 
-            ret.Success(response);
+    var driverResponseDto = UserMapper.UserToDTO((AppUser)response);
+    ret.Success(driverResponseDto);
             return Ok(ret);
         }
 
@@ -51,7 +53,8 @@ namespace Taxi_Backend.Controllers
             if (!success)
                 return Ok(ret.Fail(response.ToString()));
 
-            ret.Success(response);
+    var driverResponseDto = UserMapper.UserToDTO((AppUser)response);
+    ret.Success(driverResponseDto);
             return Ok(ret);
         }
 
@@ -66,7 +69,8 @@ namespace Taxi_Backend.Controllers
             if (!success)
                 return Ok(ret.Fail(response.ToString()));
 
-            ret.Success(response);
+          var driverResponseDto = UserMapper.UserToDTO((AppUser)response);
+    ret.Success(driverResponseDto);
             return Ok(ret);
         }
 
@@ -76,18 +80,19 @@ namespace Taxi_Backend.Controllers
             [Required] int pageSize,
             string orderColumn = "",
             bool isAscending = true,
-            string name = "")
+            string q = "")
         {
             var ret = new ReturnModel();
             var user = await _authManager.GetLoggedInUser();
             if (user == null) return Ok(ret.Logout());
 
             var page = new Page(pageNumber, pageSize, orderColumn, isAscending);
-            var filters = new List<Filter> { new Filter("Name", Op.Contains, name) };
+            var filters = new List<Filter> { new Filter(new List<string> { "name", "drivernumber" }, Op.Contains, q) };
             page.Filters = filters;
 
             var (count, drivers) = await _driverManager.GetDrivers(page, user.CompanyId);
-            ret.Success(new { count, drivers });
+            var dtos = drivers.Select(UserMapper.UserToDTO).ToList();
+            ret.Success(new { count, drivers = dtos });
             return Ok(ret);
         }
 
@@ -105,7 +110,8 @@ namespace Taxi_Backend.Controllers
             if (!success)
                 return Ok(ret.Fail(response.ToString()));
 
-            ret.Success(response);
+       var queueResponseDto = DriverQueueMapper.DriverQueueToDTO((DriverQueue)response);
+    ret.Success(queueResponseDto);
             return Ok(ret);
         }
 
@@ -124,7 +130,8 @@ namespace Taxi_Backend.Controllers
             if (!success)
                 return Ok(ret.Fail(response.ToString()));
 
-            ret.Success(response);
+                var queueResponseDto = DriverQueueMapper.DriverQueueToDTO((DriverQueue)response);
+    ret.Success(queueResponseDto);
             return Ok(ret);
         }
 
@@ -139,7 +146,8 @@ namespace Taxi_Backend.Controllers
             if (!success)
                 return Ok(ret.Fail(response.ToString()));
 
-            ret.Success(response);
+                var queueResponseDto = DriverQueueMapper.DriverQueueToDTO((DriverQueue)response);
+    ret.Success(queueResponseDto);
             return Ok(ret);
         }
 
@@ -154,7 +162,8 @@ namespace Taxi_Backend.Controllers
             if (!success)
                 return Ok(ret.Fail(response.ToString()));
 
-            ret.Success(response);
+             var queueResponseDto = DriverQueueMapper.DriverQueueToDTO((DriverQueue)response);
+    ret.Success(queueResponseDto);
             return Ok(ret);
         }
 
@@ -172,7 +181,8 @@ namespace Taxi_Backend.Controllers
             var page = new Page(pageNumber, pageSize, orderColumn, isAscending);
             var (count, queues) = await _driverManager.GetDriverQueues(page, user.CompanyId);
 
-            ret.Success(new { count, queues });
+             var queueDtos = queues.Select(DriverQueueMapper.DriverQueueToDTO).ToList();
+    ret.Success(new { count, queues = queueDtos });
             return Ok(ret);
         }
 
@@ -188,7 +198,8 @@ namespace Taxi_Backend.Controllers
             if (driverQueue == null)
                 return Ok(ret.Fail("Driver queue not found"));
 
-            ret.Success(driverQueue);
+       var queueResponseDto = DriverQueueMapper.DriverQueueToDTO(driverQueue);
+    ret.Success(queueResponseDto);
             return Ok(ret);
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Taxi_Backend.Models.DBModels;
 using Taxi_Backend.Models.DTO;
+using Taxi_Backend.Models.Enums;
 
 namespace Taxi_Backend.Mapper
 {
@@ -19,6 +20,10 @@ namespace Taxi_Backend.Mapper
                 LastLoginDateTime = user.LastLoginDateTime,
                 ModifiedDateTime = user.ModifiedDateTime,
                 ModifiedUserName = user.ModifiedUser?.Name ?? "",
+                UserRole = string.Join(',', user.UserRoles.Select(x => ((EnumUserRole)x.RoleId).ToString()).ToList()),
+                DriverNumber = user.DriverNumber ?? "",
+                Taxis = user.Taxis.Select(TaxiMapper.TaxiToDTO).ToList()
+
             };
         }
 

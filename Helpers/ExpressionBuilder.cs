@@ -51,13 +51,21 @@ namespace Taxi_Backend.Helper
 
         private static Expression GetExpression<T>(ParameterExpression param, Filter filter)
         {
-            MemberExpression member = Expression.Property(param, filter.PropertyName);
+            MemberExpression member;
             ConstantExpression constant = Expression.Constant(filter.Value);
 
-            switch (filter.Operation)
+            List<Expression> expressions = new List<Expression>();
+            try
+            {
+                switch (filter.Operation)
             {
                 case Op.Equals:
-                    return Expression.Equal(member, constant);
+                    foreach(var prop in filter.PropertyName)
+                    {
+                        member = Expression.Property(param, prop);
+                        expressions.Add(Expression.Equal(member, constant));
+                    }
+                    break;
 
                 //case Op.GreaterThan:
                 //    return Expression.GreaterThan(member, constant);
@@ -72,9 +80,13 @@ namespace Taxi_Backend.Helper
                 //    return Expression.LessThanOrEqual(member, constant);
 
                 case Op.Contains:
-                    var callEx = Expression.Call(member, typeof(string).GetMethod("IndexOf", new[] { typeof(string), typeof(StringComparison) }), Expression.Constant(filter.Value), Expression.Constant(StringComparison.OrdinalIgnoreCase));
-                    var condition = Expression.NotEqual(callEx, Expression.Constant(-1));
-                    return condition;
+                    foreach (var prop in filter.PropertyName)
+                    {
+                        member = Expression.Property(param, prop);
+                        var callEx = Expression.Call(member, typeof(string).GetMethod("IndexOf", new[] { typeof(string), typeof(StringComparison) }), Expression.Constant(filter.Value), Expression.Constant(StringComparison.OrdinalIgnoreCase));
+                        expressions.Add(Expression.NotEqual(callEx, Expression.Constant(-1)));
+                    }
+                    break;
 
                     //case Op.StartsWith:
                     //    return Expression.Call(member, startsWithMethod, constant);
@@ -83,7 +95,23 @@ namespace Taxi_Backend.Helper
                     //    return Expression.Call(member, endsWithMethod, constant);
             }
 
+            Expression ret = expressions[0];
+            
+                for (var i = 1; i < expressions.Count; i++)
+                {
+                    ret = Expression.Or(ret, expressions[i]);
+                }
+                return ret;
+            }
+
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Error : {ex.Message}");
+            }
+       
             return null;
+            
+
         }
 
         private static BinaryExpression GetExpression<T>(ParameterExpression param, Filter filter1, Filter filter2)

@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using Taxi_Backend.Managers;
 using Taxi_Backend.Mapper;
 using Taxi_Backend.Models;
+using Taxi_Backend.Models.DBModels;
 using Taxi_Backend.Models.DTO;
 using Taxi_Backend.Services;
 
@@ -33,8 +34,7 @@ namespace Taxi_Backend.Controllers
             var (res, msg) = await userManager.GetUserById(user.Id);
 
             if (!res) return Ok(ret.Fail(msg.ToString()));
-
-            ret.Success(msg);
+            ret.Success((UserMapper.UserToDTO((AppUser)msg)));
 
             return Ok(ret);
         }

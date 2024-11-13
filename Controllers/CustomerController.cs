@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using Taxi_Backend.Managers;
 using Taxi_Backend.Mapper;
 using Taxi_Backend.Models;
+using Taxi_Backend.Models.DBModels;
 using Taxi_Backend.Models.DTO;
 
 namespace Taxi_Backend.Controllers
@@ -35,7 +36,8 @@ namespace Taxi_Backend.Controllers
             if (!success)
                 return Ok(ret.Fail(response.ToString()));
 
-            ret.Success(response);
+    var customerResponseDto = CustomerMapper.CustomerToDTO((Customer)response);
+    ret.Success(customerResponseDto);
             return Ok(ret);
         }
 
@@ -53,7 +55,8 @@ namespace Taxi_Backend.Controllers
             if (!success)
                 return Ok(ret.Fail(response.ToString()));
 
-            ret.Success(response);
+    var customerResponseDto = CustomerMapper.CustomerToDTO((Customer)response);
+    ret.Success(customerResponseDto);
             return Ok(ret);
         }
 
@@ -68,7 +71,8 @@ namespace Taxi_Backend.Controllers
             if (!success)
                 return Ok(ret.Fail(response.ToString()));
 
-            ret.Success(response);
+    var customerResponseDto = CustomerMapper.CustomerToDTO((Customer)response);
+    ret.Success(customerResponseDto);
             return Ok(ret);
         }
 
@@ -83,7 +87,8 @@ namespace Taxi_Backend.Controllers
             if (!success)
                 return Ok(ret.Fail(response.ToString()));
 
-            ret.Success(response);
+    var customerResponseDto = CustomerMapper.CustomerToDTO((Customer)response);
+    ret.Success(customerResponseDto);
             return Ok(ret);
         }
 
@@ -93,18 +98,19 @@ namespace Taxi_Backend.Controllers
             [Required] int pageSize,
             string orderColumn = "",
             bool isAscending = true,
-            string phoneNumber = "")
+            string q = "")
         {
             var ret = new ReturnModel();
             var user = await _authManager.GetLoggedInUser();
             if (user == null) return Ok(ret.Logout());
 
             var page = new Page(pageNumber, pageSize, orderColumn, isAscending);
-            var filters = new List<Filter> { new Filter("PhoneNumber", Op.Contains, phoneNumber) };
+            var filters = new List<Filter> { new Filter(new List<string> { "phonenumber" }, Op.Contains, q) };
             page.Filters = filters;
 
             var (count, customers) = await _customerManager.GetCustomers(page);
-            ret.Success(new { count, customers });
+              var dtos = customers.Select(CustomerMapper.CustomerToDTO).ToList();
+            ret.Success(new { count, customers = dtos });
             return Ok(ret);
         }
 
@@ -122,7 +128,8 @@ namespace Taxi_Backend.Controllers
         if (!success)
             return Ok(ret.Fail(response.ToString()));
 
-        ret.Success(response);
+    var queueResponseDto = CustomerQueueMapper.CustomerQueueToDTO((CustomerQueue)response);
+    ret.Success(queueResponseDto);
         return Ok(ret);
     }
 
@@ -141,7 +148,8 @@ namespace Taxi_Backend.Controllers
         if (!success)
             return Ok(ret.Fail(response.ToString()));
 
-        ret.Success(response);
+var queueResponseDto = CustomerQueueMapper.CustomerQueueToDTO((CustomerQueue)response);
+    ret.Success(queueResponseDto);
         return Ok(ret);
     }
 
@@ -156,7 +164,8 @@ namespace Taxi_Backend.Controllers
         if (!success)
             return Ok(ret.Fail(response.ToString()));
 
-        ret.Success(response);
+var queueResponseDto = CustomerQueueMapper.CustomerQueueToDTO((CustomerQueue)response);
+    ret.Success(queueResponseDto);
         return Ok(ret);
     }
 
@@ -171,7 +180,8 @@ namespace Taxi_Backend.Controllers
         if (!success)
             return Ok(ret.Fail(response.ToString()));
 
-        ret.Success(response);
+var queueResponseDto = CustomerQueueMapper.CustomerQueueToDTO((CustomerQueue)response);
+    ret.Success(queueResponseDto);
         return Ok(ret);
     }
 
@@ -186,7 +196,8 @@ namespace Taxi_Backend.Controllers
         if (customerQueue == null)
             return Ok(ret.Fail("Customer queue not found"));
 
-        ret.Success(customerQueue);
+var queueResponseDto = CustomerQueueMapper.CustomerQueueToDTO(customerQueue);
+    ret.Success(queueResponseDto);
         return Ok(ret);
     }
 
@@ -203,8 +214,9 @@ namespace Taxi_Backend.Controllers
 
         var page = new Page(pageNumber, pageSize, orderColumn, isAscending);
         var (count, queues) = await _customerManager.GetCustomerQueues(page, user.CompanyId);
+        var dtos = queues.Select(CustomerQueueMapper.CustomerQueueToDTO).ToList();
+            ret.Success(new { count, queues = dtos });
 
-        ret.Success(new { count, queues });
         return Ok(ret);
     }
 
@@ -222,7 +234,8 @@ public async Task<IActionResult> CreateRequest([FromBody] CustomerRequestDTO req
     if (!success)
         return Ok(ret.Fail(response.ToString()));
 
-    ret.Success(response);
+var queueResponseDto = CustomerQueueMapper.CustomerQueueToDTO((CustomerQueue)response);
+    ret.Success(queueResponseDto);
     return Ok(ret);
 }
     }

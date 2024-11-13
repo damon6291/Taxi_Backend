@@ -17,6 +17,7 @@ namespace Taxi_Backend.Models
             OrderColumn = orderColumn ?? string.Empty;
             IsAscending = isAscending;
         }
+        // starts from 1
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
         public string OrderColumn { get; set; }
@@ -46,11 +47,17 @@ namespace Taxi_Backend.Models
     {
         public Filter(string propertyName, Op operation, object value)
         {
+            PropertyName = new List<string> { propertyName };
+            Operation = operation;
+            Value = value;
+        }
+        public Filter(List<string> propertyName, Op operation, object value)
+        {
             PropertyName = propertyName;
             Operation = operation;
             Value = value;
         }
-        public string PropertyName { get; set; }
+        public List<string> PropertyName { get; set; }
         public Op Operation { get; set; }
         public object Value { get; set; }
     }
